@@ -1,3 +1,3 @@
 export default defineAppConfig({
-    // 待添加
-})
+  // 待添加
+});
