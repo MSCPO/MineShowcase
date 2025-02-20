@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import NavBar from "../components/NavBar.vue"
-import Header from "../components/Header.vue"
-import { lightTheme, NConfigProvider } from 'naive-ui'
-import ServerList from "../components/ServerList/ServerList.vue"
-import "../assets/css/index.less"
+import NavBar from "../components/NavBar.vue";
+import Header from "../components/Header.vue";
+import { lightTheme, NConfigProvider } from "naive-ui";
+import ServerList from "../components/ServerList/ServerList.vue";
+import "../assets/css/index.less";
 </script>
 
 <template>
