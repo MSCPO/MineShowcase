@@ -1,5 +1,3 @@
-import { ServerAPI } from './methods/ServerAPI';
+import { ServerAPI } from "./methods/ServerAPI";
 
-export {
-    ServerAPI
-};
+export { ServerAPI };
