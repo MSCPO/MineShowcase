@@ -1,14 +1,17 @@
 <script setup lang="ts">
 useHead({
-  title: 'MineShowcase',
+  title: "MineShowcase",
   meta: [
-    { name: 'description', content: 'MineShowcase 是一个以 MSCPO/ServerAPI 作为后端的MSCPO页面' }
+    {
+      name: "description",
+      content: "MineShowcase 是一个以 MSCPO/ServerAPI 作为后端的MSCPO页面",
+    },
   ],
   bodyAttrs: {
-    class: 'test'
+    class: "test",
   },
-  script: [ { innerHTML: 'console.log(\'Hello world\')' } ]
-})
+  script: [{ innerHTML: "console.log('Hello world')" }],
+});
 </script>
 
 <template>
