@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import lang from '../languages/index'
+import lang from "../languages/index";
 </script>
 
-<template>
+<template></template>
 
-</template>
-
-<style scoped lang="less">
-
-</style>
+<style scoped lang="less"></style>
