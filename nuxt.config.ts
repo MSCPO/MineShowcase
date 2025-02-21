@@ -1,4 +1,4 @@
-import content from '@originjs/vite-plugin-content'
+import content from "@originjs/vite-plugin-content";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -14,9 +14,7 @@ export default defineNuxtConfig({
     },
   },
   vite: {
-    plugins: [
-      content()
-    ],
+    plugins: [content()],
   },
   features: {
     inlineStyles: true,
@@ -26,13 +24,11 @@ export default defineNuxtConfig({
   // },
   app: {
     head: {
-      viewport: 'width=device-width,initial-scale=1',
-      link: [
-        { rel: 'icon', href: '/logo.webp', sizes: 'any' }
-      ],
+      viewport: "width=device-width,initial-scale=1",
+      link: [{ rel: "icon", href: "/logo.webp", sizes: "any" }],
     },
   },
-  compatibilityDate: '2024-11-01',
+  compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  modules: ["@bg-dev/nuxt-naiveui"]
-})
+  modules: ["@bg-dev/nuxt-naiveui"],
+});
