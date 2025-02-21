@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import NavBar from "../../components/NavBar.vue"
-import Header from "../../components/Header.vue"
-import UserPanel from "../../components/UserPanel/UserPanel.vue"
-import { lightTheme, NConfigProvider } from 'naive-ui'
-import "../assets/css/index.scss"
+import NavBar from "../../components/NavBar.vue";
+import Header from "../../components/Header.vue";
+import UserPanel from "../../components/UserPanel/UserPanel.vue";
+import { lightTheme, NConfigProvider } from "naive-ui";
+import "../assets/css/index.scss";
 </script>
 
 <template>
