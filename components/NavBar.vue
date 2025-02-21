@@ -8,7 +8,7 @@ import lang from '../languages/index'
     </div>
 </template>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .navbar {
     display: flex;
     height: 100%;

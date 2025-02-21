@@ -6,6 +6,6 @@ import lang from '../languages/index'
 
 </template>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 
 </style>

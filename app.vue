@@ -7,13 +7,15 @@ useHead({
   bodyAttrs: {
     class: 'test'
   },
-  script: [ { innerHTML: 'console.log(\'Hello world\')' } ]
+  script: [{ innerHTML: 'console.log(\'Hello world\')' }]
 })
 </script>
 
 <template>
-  <div>
-    <NuxtRouteAnnouncer />
-  </div>
-  <NuxtPage />
+  <naive-config>
+    <div>
+      <NuxtRouteAnnouncer />
+    </div>
+    <NuxtPage />
+  </naive-config>
 </template>

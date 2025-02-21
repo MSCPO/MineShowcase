@@ -3,7 +3,7 @@ import NavBar from "../../components/NavBar.vue"
 import Header from "../../components/Header.vue"
 import UserPanel from "../../components/UserPanel/UserPanel.vue"
 import { lightTheme, NConfigProvider } from 'naive-ui'
-import "../assets/css/index.less"
+import "../assets/css/index.scss"
 </script>
 
 <template>
@@ -24,12 +24,12 @@ import "../assets/css/index.less"
   </n-config-provider>
 </template>
 
-<style scoped lang="less">
-@primary-color: #fff;
-@header-height: 60px;
-@sidebar-width: 280px;
-@padding-size: 1rem;
-@border-color: #ddd;
+<style scoped lang="scss">
+$primary-color: #fff;
+$header-height: 60px;
+$sidebar-width: 280px;
+$padding-size: 1rem;
+$border-color: #ddd;
 
 .layout {
   display: flex;
@@ -41,44 +41,44 @@ import "../assets/css/index.less"
     top: 0;
     left: 0;
     width: 100%;
-    background-color: @primary-color;
-    height: @header-height;
+    background-color: $primary-color;
+    height: $header-height;
     box-sizing: border-box;
-    padding: @padding-size;
-    border-bottom: 1px solid @border-color;
+    padding: $padding-size;
+    border-bottom: 1px solid $border-color;
     z-index: 100;
   }
 
   .content {
     display: flex;
     flex-grow: 1;
-    background-color: @primary-color;
-    margin-top: @header-height;
+    background-color: $primary-color;
+    margin-top: $header-height;
 
     .sidebar {
       position: fixed;
       left: 0;
       box-sizing: border-box;
-      width: @sidebar-width;
-      padding: @padding-size;
+      width: $sidebar-width;
+      padding: $padding-size;
       padding-top: 0;
       padding-right: 0;
-      height: calc(100vh - @header-height);
-      border-right: 1px solid @border-color;
+      height: calc(100vh - $header-height);
+      border-right: 1px solid $border-color;
       z-index: 100;
       transition: 0.3s all;
 
       @media screen and (max-width: 1200px) {
-        transform: translateX(-@sidebar-width);
+        transform: translateX(-$sidebar-width);
       }
     }
 
     .main-content {
-      margin-left: @sidebar-width;
+      margin-left: $sidebar-width;
       width: 100%;
       box-sizing: border-box;
       max-height: 100%;
-      padding: @padding-size;
+      padding: $padding-size;
       padding-top: 0;
       transition: 0.3s all;
       @media screen and (max-width: 1200px) {

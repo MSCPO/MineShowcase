@@ -88,7 +88,7 @@ watch(page, () => {
     </div>
 </template>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .page {
     display: flex;
     gap: 0.4rem;

@@ -175,7 +175,7 @@ const copyToClipboard = (event: MouseEvent) => {
     </div>
 </template>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 @border-color: #ddd;
 
 .card {

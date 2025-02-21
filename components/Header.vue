@@ -45,7 +45,7 @@ onMounted(() => {
     </div>
 </template>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .c_header {
     display: flex;
     align-items: center;

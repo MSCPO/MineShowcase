@@ -103,7 +103,7 @@ const handleSubmit = () => {
     </n-config-provider>
 </template>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 .layout {
     box-sizing: border-box;
     height: 100vh;
