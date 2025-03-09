@@ -24,7 +24,7 @@ const route = useRoute()
 const RegToken = computed(() => (route.query.token as string) || '')
 
 // 如果存在 token，则默认显示注册组件
-const Switch = ref(!!RegToken.value)
+const Switch = ref(Boolean(RegToken.value))
 </script>
 
 <template>
