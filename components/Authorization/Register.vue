@@ -21,7 +21,7 @@ import type { UploadInst } from 'naive-ui'
 import type { FormInst } from 'naive-ui'
 import { computed } from 'vue'
 
-const { notification: notification } = createDiscreteApi(['notification'])
+const { notification } = createDiscreteApi(['notification'])
 const options = computed(() => {
     const prefix = form.value.email.split('@')[0]
     const suffixes = ['@gmail.com', '@163.com', '@qq.com']

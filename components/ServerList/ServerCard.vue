@@ -90,7 +90,7 @@ const formatNumber = (num: number): string => {
     }
     return num.toString()
 }
-const { notification: notification } = createDiscreteApi(['notification'])
+const { notification } = createDiscreteApi(['notification'])
 const copyToClipboard = (event: MouseEvent) => {
     const input = event.target as HTMLInputElement
     const text = input.value

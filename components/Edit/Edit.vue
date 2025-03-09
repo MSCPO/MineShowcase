@@ -31,7 +31,7 @@ const serverInfo = reactive({
     error: undefined as string | undefined,
     code: 200,
 })
-const { notification: notification, message: message } = createDiscreteApi([
+const { notification, message } = createDiscreteApi([
     'notification',
     'message',
 ])

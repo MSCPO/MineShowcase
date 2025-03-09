@@ -28,7 +28,7 @@ const rules = {
         },
     ],
 }
-const { notification: notification } = createDiscreteApi(['notification'])
+const { notification } = createDiscreteApi(['notification'])
 
 const Notify = (info: {
     type: NotificationType
