@@ -31,7 +31,7 @@
         "@types/lozad": "^1.16.4",
         "@vicons/ionicons5": "^0.13.0",
         "esbuild": "^0.25.0",
-        "eslint-config-prettier": "^10.0.2",
+        "eslint-config-prettier": "^10.1.1",
         "eslint-plugin-prettier": "^5.2.3",
         "less": "^4.2.2",
         "naive-ui": "^2.41.0",
