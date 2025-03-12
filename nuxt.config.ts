@@ -24,10 +24,14 @@ export default defineNuxtConfig({
             crawlLinks: true,
             routes: ['/', '/robots.txt', '/sitemap.xml'],
         },
+        esbuild: {
+            options: {
+                target: 'esnext',
+            },
+        },
     },
     build: {
         analyze: { analyzerMode: 'static' },
-        transpile: ['naive-ui', 'vueuc'],
     },
     features: {
         inlineStyles: true,
@@ -64,9 +68,7 @@ export default defineNuxtConfig({
         cache: true,
     },
     vite: {
-        plugins: [
-            content(),
-        ],
+        plugins: [content()],
         build: {
             minify: 'terser',
             terserOptions: {
@@ -78,12 +80,13 @@ export default defineNuxtConfig({
         },
     },
     compatibilityDate: '2025-03-03',
-    devtools: { enabled: true },
-    ssr: false,
-    modules: [
-        '@bg-dev/nuxt-naiveui',
-        '@nuxtjs/seo',
-        '@nuxthub/core',
-        'nuxt-og-image'
-    ],
+    devtools: {
+        enabled: true,
+    },
+    ssr: true,
+    modules: ['@nuxtjs/seo', '@nuxthub/core', 'nuxt-og-image', '@ant-design-vue/nuxt'],
+    // Ant Design Vue Config
+    antd: {
+        extractStyle: true,
+    }
 })

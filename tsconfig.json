@@ -2,5 +2,7 @@
     "extends": "./.nuxt/tsconfig.json",
     "compilerOptions": {
         "plugins": [{ "name": "typescript-plugin-toml" }]
-    }
+    },
+    "module": "esnext",
+    "strict": true
 }

@@ -1,9 +1,4 @@
 {
     "devCommand": "nuxi dev",
-    "buildCommand": "nuxi generate",
-    "build": {
-        "env": {
-            "NODE_VERSION": "20"
-        }
-    }
+    "buildCommand": "nuxi build"
 }
