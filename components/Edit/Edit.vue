@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 // import { createDiscreteApi } from 'naive-ui'
+import { message, notification } from 'ant-design-vue'
 import {
     CloudOffline,
     CloudDownloadOutline,
@@ -31,7 +32,6 @@ const serverInfo = reactive({
     error: undefined as string | undefined,
     code: 200,
 })
-const { notification, message } = createDiscreteApi(['notification', 'message'])
 // 服务器状态检测
 const serverStatus = reactive({
     type: 'warning' as 'success' | 'error' | 'warning',
@@ -140,8 +140,8 @@ const saveServerInfo = async () => {
         if (response.code === 200) {
             await clearDraft()
             notification.success({
-                title: '保存成功',
-                content: '服务器信息已保存',
+                message: '保存成功',
+                description: '服务器信息已保存',
             })
         } else {
             message.error('保存失败：' + response.detail)
@@ -235,7 +235,7 @@ const autoSave = useDebounceFn(() => {
         link: serverInfo.link,
     }
     localStorage.setItem(`draft-${ServerID}`, JSON.stringify(draftData))
-    message.success('草稿已自动保存', { duration: 1000 })
+    message.success('草稿已自动保存', 2)
     hasDraft.value = true
 }, 3000)
 
@@ -249,7 +249,7 @@ const manualSave = () => {
         link: serverInfo.link,
     }
     localStorage.setItem(`draft-${ServerID}`, JSON.stringify(draftData))
-    message.success('草稿已保存', { duration: 1000 })
+    message.success('草稿已保存', 2)
 }
 
 onMounted(async () => {
