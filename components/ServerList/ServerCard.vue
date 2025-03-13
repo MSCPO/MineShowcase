@@ -4,7 +4,7 @@ import IMG_noimage from '../../assets/noimage.webp'
 import IMG_noicon from '../../assets/noicon.svg'
 import { ref, onMounted, watch } from 'vue'
 import type { Status } from '../../hooks/type_models'
-// import { createDiscreteApi } from 'naive-ui'
+import { notification } from 'ant-design-vue'
 const observer = lozad()
 observer.observe()
 const router = useRouter()
@@ -31,10 +31,7 @@ onMounted(() => {
 const Loading = ref(true)
 const statusText = ref<string>('')
 const statusIcon = ref<string>(IMG_noicon)
-const statusColor = ref<{ color: string; textColor: string }>({
-    color: '#00C5CD',
-    textColor: '#dfe6e9',
-})
+const statusColor = ref<string>('default')
 const StatusInfo = ref<Status>({
     id: info.id,
     name: info.name,
@@ -59,11 +56,11 @@ const fetchStatus = () => {
     StatusInfo.value = info
     if (info.status) {
         statusText.value = '在线'
-        statusColor.value = { color: '#E3F3EB', textColor: '#08532B' }
+        statusColor.value = 'success'
         statusIcon.value = info.status.icon ?? IMG_noicon
     } else {
         statusText.value = '离线'
-        statusColor.value = { color: '#4C525D', textColor: '#F1F2F6' }
+        statusColor.value = 'error'
         statusIcon.value = IMG_noicon
     }
 }
@@ -90,7 +87,7 @@ const formatNumber = (num: number): string => {
     }
     return num.toString()
 }
-const { notification } = createDiscreteApi(['notification'])
+
 const copyToClipboard = (event: MouseEvent) => {
     const input = event.target as HTMLInputElement
     const text = input.value
@@ -99,16 +96,14 @@ const copyToClipboard = (event: MouseEvent) => {
         .writeText(text)
         .then(() => {
             notification.success({
-                content: '复制成功！OwO',
-                duration: 2500,
-                keepAliveOnHover: true,
+                message: '复制成功！OwO',
+                duration: 2.5
             })
         })
         .catch(() => {
             notification.error({
-                content: '复制失败，请重试！QAQ',
-                duration: 2500,
-                keepAliveOnHover: true,
+                message: '复制失败，请重试！QAQ',
+                duration: 2.5
             })
         })
 }
@@ -118,23 +113,18 @@ const copyToClipboard = (event: MouseEvent) => {
     <!-- 为根节点绑定 ref 以供 Intersection Observer 监听 -->
     <div ref="cardRef" class="card" @click="handleCardClick">
         <div class="card-cover">
-            <n-skeleton v-if="Loading" height="100%" width="100%" />
             <img
-                v-else
                 :src="IMG_noimage"
                 alt="无图片"
                 class="lozad"
                 rel="preload"
                 as="image"
             />
-            <n-skeleton v-if="Loading" height="1.5rem" width="10rem" />
-            <div v-else class="card-type" v-text="StatusInfo.type"></div>
+            <div class="card-type" v-text="StatusInfo.type"></div>
         </div>
         <div class="card-split">
             <div class="card-icon">
-                <n-skeleton v-if="Loading" height="100%" width="100%" />
                 <img
-                    v-else
                     :src="statusIcon"
                     class="lozad"
                     :alt="StatusInfo.name + '的服务器图标'"
@@ -142,39 +132,26 @@ const copyToClipboard = (event: MouseEvent) => {
             </div>
             <div class="card-info">
                 <div class="title-box">
-                    <n-skeleton
-                        v-if="Loading"
-                        text
-                        height="1.8rem"
-                        width="8rem"
-                    />
-                    <h1 v-else class="title">{{ info.name }}</h1>
-                    <n-skeleton
-                        v-if="Loading"
-                        text
-                        height="0.8rem"
-                        width="3rem"
-                    />
+                    <h1 class="title">{{ info.name }}</h1>
                     <!-- 当状态数据加载后显示玩家人数 -->
-                    <span v-else-if="StatusInfo.status" class="t_player_num">
+                    <span v-if="StatusInfo.status" class="t_player_num">
                         ({{ formatNumber(StatusInfo.status.players.online) }} /
                         {{ formatNumber(StatusInfo.status.players.max) }})
                     </span>
                 </div>
                 <div>
-                    <n-skeleton v-if="Loading" text style="height: 1rem" />
-                    <n-input-group v-else>
-                        <n-tag
-                            size="small"
+                    <a-input-group compact>
+                        <a-tag
+                            style="height: 24px;"
                             :color="statusColor"
                             v-text="statusText"
-                        ></n-tag>
-                        <n-input
+                        ></a-tag>
+                        <a-input
                             @click.stop="copyToClipboard"
                             placeholder="加载中..."
                             :value="StatusInfo.ip"
                             readonly
-                            size="tiny"
+                            size="small"
                             style="
                                 width: auto;
                                 min-width: 120px;
@@ -183,27 +160,21 @@ const copyToClipboard = (event: MouseEvent) => {
                                 text-overflow: ellipsis;
                             "
                         />
-                    </n-input-group>
+                    </a-input-group>
                 </div>
             </div>
         </div>
         <div class="card-tags">
-            <n-skeleton
-                v-if="!StatusInfo.tags || StatusInfo.tags.length === 0"
-                text
-                style="height: 22px; width: 100%"
-            />
-            <n-space v-else size="small" class="tags-wrapper">
-                <n-tag
+            <a-space size="small" class="tags-wrapper">
+                <a-tag
                     size="small"
-                    :color="{ color: '#E3F3EB', textColor: '#08532B' }"
                     :bordered="false"
-                    :type="
+                    :color="
                         StatusInfo.auth_mode === 'OFFLINE'
-                            ? 'error'
+                            ? 'green'
                             : StatusInfo.auth_mode === 'OFFICIAL'
-                              ? 'success'
-                              : 'info'
+                              ? 'orange'
+                              : 'pink'
                     "
                     v-text="
                         StatusInfo.auth_mode === 'OFFLINE'
@@ -214,8 +185,8 @@ const copyToClipboard = (event: MouseEvent) => {
                                 ? '外置登录'
                                 : '未知'
                     "
-                ></n-tag>
-                <n-tooltip
+                ></a-tag>
+                <a-tooltip
                     v-if="StatusInfo.is_member === true"
                     trigger="hover"
                     placement="top-start"
@@ -230,8 +201,8 @@ const copyToClipboard = (event: MouseEvent) => {
                         <br />
                         我们可以确保其可以长期运行
                     </span>
-                </n-tooltip>
-                <n-tag
+                </a-tooltip>
+                <a-tag
                     v-for="(tag, index) in StatusInfo.tags.slice(0, 4)"
                     :key="index"
                     size="small"
@@ -239,7 +210,7 @@ const copyToClipboard = (event: MouseEvent) => {
                     :title="tag"
                     v-text="tag"
                 />
-            </n-space>
+            </a-space>
         </div>
     </div>
 </template>

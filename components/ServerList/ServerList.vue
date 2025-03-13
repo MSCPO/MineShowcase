@@ -11,7 +11,7 @@ const loading = ref(true)
 const error = ref<Error | null>(null)
 const page = ref(1)
 const pageSize = 12
-const pageCount = ref(0)
+const ServersTotal = ref(0)
 const isVisible = ref(true)
 const searchQuery = ref('')
 interface ServerWithPinyin extends Status {
@@ -57,6 +57,7 @@ const fetchAllData = async () => {
         const response = await ServerAPI.Get<List>('/v1/servers', {})
         allData.value = response.server_list
         serverDataWithPinyin.value = [...allData.value]
+        ServersTotal.value = response.total
 
         // 异步加载拼音数据，完成后再更新
         initPinyinData(allData.value).then((dataWithPinyin) => {
@@ -74,7 +75,6 @@ const fetchAllData = async () => {
 const updatePageData = () => {
     isVisible.value = false
     setTimeout(() => {
-        pageCount.value = Math.ceil(filteredData.value.length / pageSize)
         const start = (page.value - 1) * pageSize
         const end = start + pageSize
         currentPageData.value = filteredData.value.slice(start, end)
@@ -126,7 +126,7 @@ onMounted(() => {
         <div v-else>
             <!-- 搜索框 -->
             <div class="search-box">
-                <n-input
+                <a-input
                     v-model:value="searchQuery"
                     placeholder="输入服务器名称、拼音或拼音首字母搜索..."
                     clearable
@@ -134,47 +134,47 @@ onMounted(() => {
                 />
             </div>
             <div class="page">
-                <n-button @click="random" size="small">随机</n-button>
-                <n-pagination
-                    v-model:page="page"
-                    :page-count="pageCount"
-                    simple
+                <a-button @click="random">
+                    随机
+                </a-button>
+                <a-pagination
+                    v-model:current="page"
+                    :page-size="pageSize"
+                    :total="ServersTotal"
                 />
             </div>
-            <n-divider />
-            <NNotificationProvider placement="bottom-right">
-                <TransitionGroup
-                    tag="div"
-                    name="fade"
-                    class="grid-list"
-                    ref="serverList"
-                >
-                    <ServerCard
-                        v-for="server in currentPageData"
-                        v-if="isVisible"
-                        :key="server.id"
-                        :id="server.id"
-                        :name="server.name"
-                        :ip="server.ip"
-                        :auth_mode="server.auth_mode"
-                        :desc="server.desc"
-                        :status="server.status"
-                        :link="server.link"
-                        :tags="server.tags"
-                        :type="server.type"
-                        :version="server.version"
-                        :is_hide="server.is_hide"
-                        :is_member="server.is_member"
-                        :permission="server.permission"
-                        :detail="server.detail"
-                    />
-                </TransitionGroup>
-            </NNotificationProvider>
-            <n-divider />
-            <n-pagination
-                v-model:page="page"
-                :page-count="pageCount"
-                simple
+            <a-divider />
+            <TransitionGroup
+                tag="div"
+                name="fade"
+                class="grid-list"
+                ref="serverList"
+            >
+                <ServerCard
+                    v-for="server in currentPageData"
+                    v-if="isVisible"
+                    :key="server.id"
+                    :id="server.id"
+                    :name="server.name"
+                    :ip="server.ip"
+                    :auth_mode="server.auth_mode"
+                    :desc="server.desc"
+                    :status="server.status"
+                    :link="server.link"
+                    :tags="server.tags"
+                    :type="server.type"
+                    :version="server.version"
+                    :is_hide="server.is_hide"
+                    :is_member="server.is_member"
+                    :permission="server.permission"
+                    :detail="server.detail"
+                />
+            </TransitionGroup>
+            <a-divider />
+            <a-pagination
+                v-model:current="page"
+                :page-size="pageSize"
+                :total="ServersTotal"
                 v-if="isVisible"
             />
         </div>
