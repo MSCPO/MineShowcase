@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@ant-design-vue/nuxt": "^1.4.6",
+        "@ant-design/icons-vue": "^7.0.1",
         "@vueuse/core": "^12.8.2",
         "alova": "^3.2.10",
         "ant-design-vue": "^4.2.6",

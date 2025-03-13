@@ -101,12 +101,12 @@ const formatDelay = (delay?: number) => {
 
 <template>
     <div class="detail">
-        <n-spin :show="loading">
+        <a-spin :show="loading">
             <div v-if="server" class="server-detail">
                 <template v-if="server.code === 200">
                     <!-- 头部信息 -->
                     <div class="server-header">
-                        <n-avatar
+                        <a-avatar
                             class="n-img"
                             round
                             :size="120"
@@ -117,70 +117,67 @@ const formatDelay = (delay?: number) => {
                                 <h1 class="server-name">
                                     {{ server.name }}
                                 </h1>
-                                <n-space align="center">
-                                    <n-tag
+                                <a-space align="center">
+                                    <a-tag
                                         :bordered="false"
                                         :type="statusColor"
                                     >
-                                        <template #icon>
-                                            <n-icon :component="statusIcon" />
-                                        </template>
                                         {{ server.status ? '在线' : '离线' }}
-                                    </n-tag>
+                                    </a-tag>
                                     <span class="server-ip">
                                         {{ server.ip || 'IP 未公开' }}
                                     </span>
-                                </n-space>
+                                </a-space>
                             </div>
                             <NuxtLink
                                 v-if="server.permission !== 'guest'"
                                 :to="`/editor/${serverId}`"
                             >
-                                <n-button type="primary">编辑服务器</n-button>
+                                <a-button type="primary">编辑服务器</a-button>
                             </NuxtLink>
                         </div>
                     </div>
 
                     <!-- 关键指标 -->
-                    <n-grid x-gap="24" y-gap="24" cols="2 s:3 m:4">
-                        <n-gi>
-                            <n-statistic label="在线玩家">
+                    <a-grid x-gap="24" y-gap="24" cols="2 s:3 m:4">
+                        <a-col>
+                            <a-statistic label="在线玩家">
                                 {{ server.status?.players.online ?? '-' }}/{{
                                     server.status?.players.max ?? '-'
                                 }}
-                            </n-statistic>
-                        </n-gi>
-                        <n-gi>
-                            <n-statistic label="延迟">
+                            </a-statistic>
+                        </a-col>
+                        <a-col>
+                            <a-statistic label="延迟">
                                 {{ formatDelay(server.status?.delay) }}
-                            </n-statistic>
-                        </n-gi>
-                        <n-gi>
-                            <n-statistic label="版本">
+                            </a-statistic>
+                        </a-col>
+                        <a-col>
+                            <a-statistic label="版本">
                                 {{ server.version }}
-                            </n-statistic>
-                        </n-gi>
-                        <n-gi>
-                            <n-statistic label="认证模式">
+                            </a-statistic>
+                        </a-col>
+                        <a-col>
+                            <a-statistic label="认证模式">
                                 {{ server.auth_mode }}
-                            </n-statistic>
-                        </n-gi>
-                    </n-grid>
+                            </a-statistic>
+                        </a-col>
+                    </a-grid>
 
                     <!-- 标签 -->
                     <div class="tag-section">
-                        <n-tag
+                        <a-tag
                             v-for="tag in server.tags"
                             :key="tag"
                             bordered
                             round
                         >
                             {{ tag }}
-                        </n-tag>
+                        </a-tag>
                     </div>
 
                     <!-- 描述和MOTD -->
-                    <n-card title="服务器描述" class="description-card">
+                    <a-card title="服务器描述" class="description-card">
                         <MdPreview
                             editor-id="preview-only"
                             :modelValue="server.desc"
@@ -195,18 +192,18 @@ const formatDelay = (delay?: number) => {
                                 }}</pre>
                             </div>
                         </template>
-                    </n-card>
-                    <n-card class="info-card">
+                    </a-card>
+                    <a-card class="info-card">
                         <!-- 所有者部分 -->
                         <div v-if="managers?.owners?.length">
                             <h3 class="section-title">所有者</h3>
-                            <n-space>
+                            <a-space>
                                 <div
                                     v-for="owner in managers.owners"
                                     :key="owner.id"
                                     class="user-item"
                                 >
-                                    <n-avatar
+                                    <a-avatar
                                         :src="owner.avatar_url || IMG_noicon"
                                         round
                                         size="small"
@@ -215,19 +212,19 @@ const formatDelay = (delay?: number) => {
                                         {{ owner.display_name }}
                                     </span>
                                 </div>
-                            </n-space>
+                            </a-space>
                         </div>
 
                         <!-- 管理员部分 -->
                         <div v-if="managers?.admins?.length">
                             <h3 class="section-title">管理员</h3>
-                            <n-space>
+                            <a-space>
                                 <div
                                     v-for="admin in managers.admins"
                                     :key="admin.id"
                                     class="user-item"
                                 >
-                                    <n-avatar
+                                    <a-avatar
                                         :src="admin.avatar_url || IMG_noicon"
                                         round
                                         size="small"
@@ -236,7 +233,7 @@ const formatDelay = (delay?: number) => {
                                         {{ admin.display_name }}
                                     </span>
                                 </div>
-                            </n-space>
+                            </a-space>
                         </div>
 
                         <!-- 相关链接部分 -->
@@ -251,9 +248,9 @@ const formatDelay = (delay?: number) => {
                                 {{ server.link }}
                             </a>
                         </template>
-                    </n-card>
+                    </a-card>
                 </template>
-                <n-result
+                <a-result
                     v-else
                     class="status-result"
                     :status="resultStatus.type"
@@ -262,12 +259,12 @@ const formatDelay = (delay?: number) => {
                 >
                     <template #footer>
                         <NuxtLink :to="`/`">
-                            <n-button type="primary">返回首页</n-button>
+                            <a-button type="primary">返回首页</a-button>
                         </NuxtLink>
                     </template>
-                </n-result>
+                </a-result>
             </div>
-        </n-spin>
+        </a-spin>
     </div>
 </template>
 
@@ -297,7 +294,7 @@ const formatDelay = (delay?: number) => {
             gap: 32px;
             margin-bottom: 40px;
 
-            .n-img {
+            .a-img {
                 background-color: #fefefe;
             }
 
@@ -329,7 +326,7 @@ const formatDelay = (delay?: number) => {
                     }
                 }
 
-                .n-button {
+                .a-button {
                     flex-shrink: 0;
                 }
             }
@@ -445,7 +442,7 @@ const formatDelay = (delay?: number) => {
                     text-align: center;
                 }
 
-                .n-button {
+                .a-button {
                     width: 100%;
                     margin-top: 12px;
                 }
