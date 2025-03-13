@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { shallowRef, ref, onMounted, onBeforeUnmount } from 'vue'
-// import { NCard, NTag, NSpace, NStatistic, NTime } from 'naive-ui'
 const recommendations = shallowRef([
     { label: 'XXX', value: 1, ping: 0 },
     { label: 'XXX', value: 2, ping: 0 },
@@ -34,84 +33,79 @@ const filters = ref({
 <template>
     <div class="content-wrapper">
         <!-- 为您推荐 -->
-        <n-card class="section recommend-section">
-            <template #header>
+        <a-card class="section recommend-section">
+            <template #title>
                 <div class="card-title" role="heading">为您推荐</div>
             </template>
-            <n-space vertical>
+            <a-space direction="vertical">
                 <div
                     v-for="server in recommendations"
                     :key="server.value"
                     class="server-item"
                 >
-                    <n-tag
+                    <a-tag
                         :bordered="false"
                         type="success"
                         size="small"
-                        :color="{ color: '#E3F3EB', textColor: '#08532B' }"
                     >
                         {{ server.ping }}ms
-                    </n-tag>
+                    </a-tag>
                     <span class="server-name">{{ server.label }}</span>
                 </div>
-            </n-space>
-        </n-card>
+            </a-space>
+        </a-card>
 
         <!-- 全站状态 -->
-        <n-card class="section stats-section">
-            <template #header>
+        <a-card class="section stats-section">
+            <template #title>
                 <div class="card-title" role="heading">全站状态</div>
             </template>
-            <n-space vertical>
-                <n-statistic label="在线玩家" :value="stats.onlinePlayers" />
-                <n-statistic label="24小时新服" :value="stats.newServers24h" />
-                <n-time
-                    type="relative"
-                    :time="lastUpdated"
-                    class="time-display"
-                />
-            </n-space>
-        </n-card>
+            <a-space direction="vertical">
+                <a-statistic title="在线玩家" :value="stats.onlinePlayers" />
+                <a-statistic title="24小时新服" :value="stats.newServers24h" />
+                <p> 更新时间 </p>
+            </a-space>
+        </a-card>
 
         <!-- 精准筛选 -->
-        <n-card class="section filter-section">
-            <template #header>
+        <a-card class="section filter-section">
+            <template #title>
                 <div class="card-title" role="heading">精准筛选</div>
             </template>
-            <n-space vertical>
+            <a-space direction="vertical">
                 <div class="custom-sider">
                     <!-- 游戏模式筛选 -->
-                    <n-select
+                    <a-select
                         :options="
                             filters.modes.map((m) => ({ label: m, value: m }))
                         "
                         multiple
                         placeholder="游戏模式"
-                        aria-label="选择游戏模式"
+                        label="选择游戏模式"
                     />
 
                     <!-- 玩家数量范围筛选 -->
-                    <n-slider
+                    <a-slider
                         :step="10"
                         v-model:value="playerRange"
                         range
-                        :format-tooltip="(v: number) => `${v}+玩家`"
+                        :tip-formatter="(v: number) => `${v}+ 玩家`"
                     />
 
                     <!-- 标签筛选 -->
                     <div class="tag-cloud">
-                        <n-tag
+                        <a-tag
                             v-for="tag in filters.tags"
                             :key="tag"
                             round
                             size="small"
                         >
                             {{ tag }}
-                        </n-tag>
+                        </a-tag>
                     </div>
                 </div>
-            </n-space>
-        </n-card>
+            </a-space>
+        </a-card>
     </div>
 </template>
 

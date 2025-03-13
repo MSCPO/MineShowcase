@@ -12,7 +12,7 @@ const error = ref<Error | null>(null)
 const page = ref(1)
 const pageSize = 12
 const ServersTotal = ref(0)
-const isVisible = ref(true)
+const isVisible = ref(false)
 const searchQuery = ref('')
 interface ServerWithPinyin extends Status {
     pinyin?: string // 全拼
@@ -134,9 +134,7 @@ onMounted(() => {
                 />
             </div>
             <div class="page">
-                <a-button @click="random">
-                    随机
-                </a-button>
+                <a-button @click="random">随机</a-button>
                 <a-pagination
                     v-model:current="page"
                     :page-size="pageSize"
@@ -169,6 +167,10 @@ onMounted(() => {
                     :permission="server.permission"
                     :detail="server.detail"
                 />
+                <div v-else class="skeleton" style="max-width: 20rem;">
+                    <a-skeleton active />
+                    <a-skeleton avatar active :paragraph="{ rows: 2 }" />
+                </div>
             </TransitionGroup>
             <a-divider />
             <a-pagination

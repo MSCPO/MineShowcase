@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { shallowRef, ref, onMounted, onBeforeUnmount } from 'vue'
-// import { NCard, NSpace, NStatistic, NTime } from 'naive-ui'
 
 const stats = shallowRef({
     onlinePlayers: 0,
@@ -24,20 +23,16 @@ onBeforeUnmount(() => {
 <template>
     <div class="content-wrapper">
         <!-- 全站状态 -->
-        <n-card class="section stats-section">
-            <template #header>
+        <a-card class="section stats-section">
+            <template #title>
                 <div class="card-title" role="heading">全站状态</div>
             </template>
-            <n-space vertical>
-                <n-statistic label="在线玩家" :value="stats.onlinePlayers" />
-                <n-statistic label="24小时新服" :value="stats.newServers24h" />
-                <n-time
-                    type="relative"
-                    :time="lastUpdated"
-                    class="time-display"
-                />
-            </n-space>
-        </n-card>
+            <a-space vertical>
+                <a-statistic title="在线玩家" :value="stats.onlinePlayers" />
+                <a-statistic title="24小时新服" :value="stats.newServers24h" />
+                <p> 更新时间 </p>
+            </a-space>
+        </a-card>
     </div>
 </template>
 
