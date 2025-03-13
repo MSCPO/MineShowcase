@@ -192,9 +192,9 @@ const copyToClipboard = (event: MouseEvent) => {
                     placement="top-start"
                 >
                     <template #trigger>
-                        <n-tag size="small" :bordered="false" type="info">
+                        <a-tag size="small" :bordered="false" type="info">
                             成员服
-                        </n-tag>
+                        </a-tag>
                     </template>
                     <span>
                         此服务器是集体宣传组织的成员服
