@@ -34,10 +34,10 @@ const Switch = ref(Boolean(RegToken.value))
             <h2>管理实用程序</h2>
         </div>
         <div class="r_body">
-            <n-switch :round="false" v-model:value="Switch">
+            <a-switch v-model:checked="Switch">
                 <template #checked>登录</template>
                 <template #unchecked>注册</template>
-            </n-switch>
+            </a-switch>
             <Register :token="RegToken" v-if="Switch" />
             <Login v-else />
         </div>

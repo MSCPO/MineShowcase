@@ -9,16 +9,16 @@ import type {
     ReturnResponse,
     ReturnResponse_Register,
 } from '../../hooks/type_models'
-import type {
-    FormItemRule,
-    NotificationType,
-    UploadCustomRequestOptions,
-} from 'naive-ui'
-import { createDiscreteApi } from 'naive-ui'
+// import type {
+//     FormItemRule,
+//     NotificationType,
+//     UploadCustomRequestOptions,
+// } from 'naive-ui'
+// import { createDiscreteApi } from 'naive-ui'
 import { VueCropper } from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
-import type { UploadInst } from 'naive-ui'
-import type { FormInst } from 'naive-ui'
+// import type { UploadInst } from 'naive-ui'
+// import type { FormInst } from 'naive-ui'
 import { computed } from 'vue'
 
 const { notification } = createDiscreteApi(['notification'])

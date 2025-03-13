@@ -4,8 +4,8 @@ import { ServerAPI } from '../../hooks/api'
 import { useRequest } from 'alova/client'
 import reCaptcha from '../../components/Recaptcha/ReCaptchaV3.vue'
 import type { SiteKey, Login } from '../../hooks/type_models'
-import type { NotificationType } from 'naive-ui/es/notification'
-import { createDiscreteApi } from 'naive-ui'
+// import type { NotificationType } from 'naive-ui/es/notification'
+// import { createDiscreteApi } from 'naive-ui'
 
 const form = ref({
     account: '',

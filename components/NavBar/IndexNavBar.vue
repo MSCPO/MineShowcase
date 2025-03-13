@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { shallowRef, ref, onMounted, onBeforeUnmount } from 'vue'
-import { NCard, NTag, NSpace, NStatistic, NTime } from 'naive-ui'
+// import { NCard, NTag, NSpace, NStatistic, NTime } from 'naive-ui'
 const recommendations = shallowRef([
     { label: 'XXX', value: 1, ping: 0 },
     { label: 'XXX', value: 2, ping: 0 },

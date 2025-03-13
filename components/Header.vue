@@ -4,14 +4,14 @@ import Logo from '../assets/logo.webp'
 import { ref, onMounted, computed, h } from 'vue'
 import { ServerAPI, ServerAPI_Token } from '../hooks/api'
 import { useRequest } from 'alova/client'
-import {
-    createDiscreteApi,
-    NBadge,
-    NDropdown,
-    NIcon,
-    NInput,
-    type NotificationType,
-} from 'naive-ui'
+// import {
+//     createDiscreteApi,
+//     NBadge,
+//     NDropdown,
+//     NIcon,
+//     NInput,
+//     type NotificationType,
+// } from 'naive-ui'
 import {
     Notifications,
     PersonCircleOutline,
@@ -22,13 +22,9 @@ import type { User } from '../hooks/type_models'
 import { useDebounceFn, useThrottleFn, useEventListener } from '@vueuse/core'
 import { markRaw } from 'vue'
 
-const { notification: msgNotification, dialog: msgDialog } = createDiscreteApi([
-    'dialog',
-    'notification',
-])
-
 const username = ref('')
 const token_status = ref(false)
+const showModal = ref(false)
 const unreadCount = ref(0)
 const searchQuery = ref('')
 const searchResults = ref<any[]>([])
@@ -38,11 +34,10 @@ const avatar_url = ref<string | undefined | null>('')
 const router = useRouter()
 const handleTokenExpiration = () => {
     localStorage.removeItem('token')
-    Notify({
-        type: 'warning',
-        content: '登录已过期',
-        duration: 2000,
-        meta: '请重新登录',
+    notification.warning({
+        message: '登录已过期',
+        duration: 4,
+        description: '请重新登录',
     })
     router.push('/login')
 }
@@ -132,20 +127,6 @@ const handleBlur = () => {
     }, 200)
 }
 
-// 通知弹窗
-const Notify = (info: {
-    type: NotificationType
-    content: string
-    meta: string
-    duration: number
-}) =>
-    msgNotification[info.type]({
-        content: info.content,
-        meta: info.meta,
-        duration: info.duration,
-        keepAliveOnHover: true,
-    })
-
 // 登出逻辑
 const handleLogout = () => {
     msgDialog.warning({
@@ -225,20 +206,20 @@ const handleMouseLeave = () => {
             <h2>{{ lang.NavBar.title }}</h2>
         </div>
         <div class="search-container">
-            <n-input
+            <a-input
                 v-model:value="searchQuery"
                 placeholder="搜索服务器..."
                 role="searchbox"
-                clearable
-                @update:value="performSearch"
+                allowClear
+                @change="performSearch"
                 @focus="showDropdown = true"
                 @blur="handleBlur"
             >
                 <template #prefix>
                     <n-icon :component="SearchOutline" />
                 </template>
-            </n-input>
-            <n-dropdown
+            </a-input>
+            <a-dropdown
                 placement="bottom"
                 trigger="manual"
                 :options="searchOptions"
@@ -246,7 +227,7 @@ const handleMouseLeave = () => {
                 :loading="searchLoading"
             >
                 <div></div>
-            </n-dropdown>
+            </a-dropdown>
         </div>
         <div class="account">
             <n-badge :value="unreadCount" :max="99" v-if="token_status">
@@ -278,6 +259,12 @@ const handleMouseLeave = () => {
                         {{ username }} 的个人资料头像
                     </span>
                 </div>
+                <a-modal
+                    v-model:visible="showModal"
+                    title="确认退出"
+                >
+                    <p>确定要退出当前账号吗？</p>
+                </a-modal>
             </n-dropdown>
             <NuxtLink v-else class="login" to="/auth">登录</NuxtLink>
         </div>

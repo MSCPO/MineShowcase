@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { shallowRef, ref, onMounted, onBeforeUnmount } from 'vue'
-import { NCard, NSpace, NStatistic, NTime } from 'naive-ui'
+// import { NCard, NSpace, NStatistic, NTime } from 'naive-ui'
 
 const stats = shallowRef({
     onlinePlayers: 0,

@@ -4,7 +4,7 @@ import IMG_noimage from '../../assets/noimage.webp'
 import IMG_noicon from '../../assets/noicon.svg'
 import { ref, onMounted, watch } from 'vue'
 import type { Status } from '../../hooks/type_models'
-import { createDiscreteApi } from 'naive-ui'
+// import { createDiscreteApi } from 'naive-ui'
 const observer = lozad()
 observer.observe()
 const router = useRouter()

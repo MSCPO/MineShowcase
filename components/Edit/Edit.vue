@@ -3,7 +3,7 @@ import { reactive, onMounted, ref, watch, markRaw } from 'vue'
 import { useRoute } from 'vue-router'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
-import { createDiscreteApi } from 'naive-ui'
+// import { createDiscreteApi } from 'naive-ui'
 import {
     CloudOffline,
     CloudDownloadOutline,

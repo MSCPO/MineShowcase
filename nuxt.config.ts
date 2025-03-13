@@ -83,7 +83,6 @@ export default defineNuxtConfig({
     devtools: {
         enabled: true,
     },
-    ssr: true,
     modules: ['@nuxtjs/seo', '@nuxthub/core', 'nuxt-og-image', '@ant-design-vue/nuxt'],
     // Ant Design Vue Config
     antd: {
