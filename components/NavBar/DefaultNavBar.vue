@@ -27,7 +27,7 @@ onBeforeUnmount(() => {
             <template #title>
                 <div class="card-title" role="heading">全站状态</div>
             </template>
-            <a-space vertical>
+            <a-space direction="vertical">
                 <a-statistic title="在线玩家" :value="stats.onlinePlayers" />
                 <a-statistic title="24小时新服" :value="stats.newServers24h" />
                 <p> 更新时间 </p>
