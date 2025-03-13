@@ -4,8 +4,7 @@ import { ServerAPI } from '../../hooks/api'
 import { useRequest } from 'alova/client'
 import reCaptcha from '../../components/Recaptcha/ReCaptchaV3.vue'
 import type { SiteKey, Login } from '../../hooks/type_models'
-// import type { NotificationType } from 'naive-ui/es/notification'
-// import { createDiscreteApi } from 'naive-ui'
+import { notification } from 'ant-design-vue'
 
 const form = ref({
     account: '',
@@ -28,20 +27,6 @@ const rules = {
         },
     ],
 }
-const { notification } = createDiscreteApi(['notification'])
-
-const Notify = (info: {
-    type: NotificationType
-    content: string
-    meta: string
-    duration: number
-}) =>
-    notification[info.type]({
-        content: info.content,
-        meta: info.meta,
-        duration: info.duration,
-        keepAliveOnHover: true,
-    })
 
 const isLoaded = ref(false)
 const captchaKey = ref(0) // 用于强制刷新reCaptcha组件
@@ -69,30 +54,27 @@ const handleSubmit = async () => {
     )
 
     if (response.code === 200) {
-        Notify({
-            type: 'success',
-            content: '登录成功',
-            meta: '欢迎回来',
-            duration: 2000,
+        notification.success({
+            message: '登录成功',
+            duration: 4,
+            description: '欢迎回来!',
         })
         await new Promise((resolve) => setTimeout(resolve, 1000))
         localStorage.setItem('token', response.access_token)
         localStorage.setItem('token_type', response.token_type)
         window.location.href = '/'
     } else if (response.code === 400) {
-        Notify({
-            type: 'error',
-            content: 'reCAPTCHA 验证失败',
-            meta: '请重试',
-            duration: 3000,
+        notification.error({
+            message: 'reCAPTCHA 验证失败',
+            duration: 4,
+            description: '请重试',
         })
         captchaKey.value += 1
     } else if (response.code === 401) {
-        Notify({
-            type: 'error',
-            content: '登录失败',
-            meta: '用户名或密码错误',
-            duration: 3000,
+        notification.error({
+            message: '登录失败',
+            duration: 4,
+            description: '用户名或密码错误',
         })
     }
     captchaKey.value++
@@ -102,24 +84,23 @@ const handleSubmit = async () => {
 
 <template>
     <h2>登录</h2>
-    <n-form :model="form" :rules="rules" @submit.prevent="handleSubmit">
-        <n-form-item path="account" label="账号/邮箱">
-            <n-input
+    <a-form :model="form" @submit.prevent="handleSubmit">
+        <a-form-item :rules="rules.account" name="account" label="账号/邮箱">
+            <a-input
                 v-model:value="form.account"
                 @keydown.enter.prevent
                 placeholder="输入尊贵的邮箱 或 sexy的用户名"
             />
-        </n-form-item>
-        <n-form-item path="password" label="密码">
-            <n-input
-                type="password"
+        </a-form-item>
+        <a-form-item :rules="rules.password" name="password" label="密码">
+            <a-input-password
                 v-model:value="form.password"
                 @keydown.enter.prevent
                 placeholder="输入绚丽的密码"
             />
-        </n-form-item>
-        <n-row :gutter="[0, 24]">
-            <n-col :span="24">
+        </a-form-item>
+        <a-row :gutter="[0, 24]">
+            <a-col :span="24">
                 <div style="display: flex; justify-content: flex-end">
                     <reCaptcha
                         v-if="data"
@@ -129,19 +110,19 @@ const handleSubmit = async () => {
                         action="submit"
                         :key="captchaKey"
                     >
-                        <n-button
+                        <a-button
                             type="primary"
                             :loading="token === ''"
                             @click="handleSubmit()"
                         >
                             登录
-                        </n-button>
+                        </a-button>
                     </reCaptcha>
-                    <n-button v-else type="primary" :loading="true">
+                    <a-button v-else type="primary" :loading="true">
                         加载中...
-                    </n-button>
+                    </a-button>
                 </div>
-            </n-col>
-        </n-row>
-    </n-form>
+            </a-col>
+        </a-row>
+    </a-form>
 </template>

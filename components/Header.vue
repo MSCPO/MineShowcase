@@ -4,14 +4,7 @@ import Logo from '../assets/logo.webp'
 import { ref, onMounted, computed, h } from 'vue'
 import { ServerAPI, ServerAPI_Token } from '../hooks/api'
 import { useRequest } from 'alova/client'
-// import {
-//     createDiscreteApi,
-//     NBadge,
-//     NDropdown,
-//     NIcon,
-//     NInput,
-//     type NotificationType,
-// } from 'naive-ui'
+import { notification } from 'ant-design-vue'
 import {
     Notifications,
     PersonCircleOutline,
@@ -129,16 +122,7 @@ const handleBlur = () => {
 
 // 登出逻辑
 const handleLogout = () => {
-    msgDialog.warning({
-        title: '确认退出',
-        content: '确定要退出当前账号吗？',
-        positiveText: '确定',
-        negativeText: '取消',
-        onPositiveClick: () => {
-            localStorage.removeItem('token')
-            window.location.reload()
-        },
-    })
+    showModal.value = true
 }
 
 // 图标渲染
@@ -230,24 +214,24 @@ const handleMouseLeave = () => {
             </a-dropdown>
         </div>
         <div class="account">
-            <n-badge :value="unreadCount" :max="99" v-if="token_status">
-                <n-icon
+            <a-badge :badge="unreadCount" :max="99" v-if="token_status">
+                <a-icon
                     size="20"
                     class="notify-icon"
                     aria-label="通知"
                     role="status"
                 >
                     <Notifications />
-                </n-icon>
-            </n-badge>
-            <n-dropdown
+                </a-icon>
+            </a-badge>
+            <a-dropdown
                 v-if="token_status && avatar_url"
                 placement="bottom-end"
                 trigger="hover"
                 :options="dropdownOptions"
             >
                 <div class="avatar-wrapper">
-                    <n-avatar
+                    <a-avatar
                         size="medium"
                         :src="avatar_url"
                         :alt="username + ' 的头像'"
@@ -265,7 +249,7 @@ const handleMouseLeave = () => {
                 >
                     <p>确定要退出当前账号吗？</p>
                 </a-modal>
-            </n-dropdown>
+            </a-dropdown>
             <NuxtLink v-else class="login" to="/auth">登录</NuxtLink>
         </div>
     </header>
