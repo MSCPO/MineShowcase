@@ -180,7 +180,7 @@ const handleMouseLeave = () => {
                 @blur="handleBlur"
             >
                 <template #prefix>
-                    <n-icon :component="SearchOutlined" />
+                    <SearchOutlined />
                 </template>
             </a-input>
             <a-dropdown

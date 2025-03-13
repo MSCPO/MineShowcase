@@ -101,7 +101,7 @@ const formatDelay = (delay?: number) => {
 
 <template>
     <div class="detail">
-        <a-spin :show="loading">
+        <a-spin tip="加载中..." :spinning="loading">
             <div v-if="server" class="server-detail">
                 <template v-if="server.code === 200">
                     <!-- 头部信息 -->
