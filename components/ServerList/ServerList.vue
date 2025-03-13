@@ -57,7 +57,6 @@ const fetchAllData = async () => {
         const response = await ServerAPI.Get<List>('/v1/servers', {})
         allData.value = response.server_list
         serverDataWithPinyin.value = [...allData.value]
-        ServersTotal.value = response.total
 
         // 异步加载拼音数据，完成后再更新
         initPinyinData(allData.value).then((dataWithPinyin) => {
@@ -78,6 +77,7 @@ const updatePageData = () => {
         const start = (page.value - 1) * pageSize
         const end = start + pageSize
         currentPageData.value = filteredData.value.slice(start, end)
+        ServersTotal.value = filteredData.value.length
         isVisible.value = true
     }, 300)
 }
