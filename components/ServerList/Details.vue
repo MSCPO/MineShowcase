@@ -10,6 +10,10 @@ import {
 } from 'naive-ui'
 import { ServerAPI_Token } from '../../hooks/api'
 import { MdPreview } from 'md-editor-v3'
+import { MdEditor } from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
+
+const showReport = ref(false)
 
 import {
     CheckmarkCircleOutline,
@@ -186,6 +190,34 @@ const formatDelay = (delay?: number) => {
 
                     <!-- 描述和MOTD -->
                     <n-card title="服务器描述" class="description-card">
+                        <template #header-extra>
+                        <!--举报部分 by AlmexnStudio-->
+                              <n-modal
+                                 v-model:show="showReport"
+                                 preset="dialog"
+                                 type="error"
+                                 positive-text="举报"
+                                 negative-text="点错了"
+                                 title="举报服务器"
+                                 mask-closable=false
+                                 @positive-click="submitCallback"
+                                @negative-click="cancelCallback"
+                                 >
+                                    <MdEditor
+                            v-model="report_content"
+                            editor-id="serverDesc"
+                            :preview="false"
+                            @on-save="manualSave"
+                            noKatex
+                            noMermaid
+                            noUploadImg
+                            class="md-editor"
+                            :theme="theme"
+                        />
+                                 </n-modal>
+  
+                            <n-button type="error" text @click="showReport = true">举报</n-button>
+                        </template>
                         <MdPreview
                             editor-id="preview-only"
                             :modelValue="server.desc"
