@@ -24,7 +24,7 @@ const route = useRoute()
 const RegToken = computed(() => (route.query.token as string) || '')
 
 // 如果存在 token，则默认显示注册组件
-const Switch = ref(Boolean(RegToken.value))
+const activeKey = ref(RegToken.value  ? 'register' : 'login')
 </script>
 
 <template>
@@ -34,12 +34,14 @@ const Switch = ref(Boolean(RegToken.value))
             <h2>管理实用程序</h2>
         </div>
         <div class="r_body">
-            <a-switch v-model:checked="Switch">
-                <template #checked>登录</template>
-                <template #unchecked>注册</template>
-            </a-switch>
-            <Register :token="RegToken" v-if="Switch" />
-            <Login v-else />
+            <a-tabs v-model:activeKey="activeKey">
+                <a-tab-pane key="login" tab="登录">
+                    <Login />
+                </a-tab-pane>
+                <a-tab-pane key="register" tab="注册">
+                    <Register :token="RegToken" />
+                </a-tab-pane>
+            </a-tabs>
         </div>
     </div>
 </template>
