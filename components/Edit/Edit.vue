@@ -3,7 +3,6 @@ import { reactive, onMounted, ref, watch, markRaw } from 'vue'
 import { useRoute } from 'vue-router'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
-// import { createDiscreteApi } from 'naive-ui'
 import { message, notification } from 'ant-design-vue'
 import {
     CloudOffline,
@@ -11,6 +10,7 @@ import {
     CloudDone,
 } from '@vicons/ionicons5'
 import { useRequest } from 'alova/client'
+import DynamicTags from '../DynamicTags/DynamicTags.vue'
 import { ServerAPI_Token, fetch_status } from '../../hooks/api'
 import type { Fetch_Status, StatusWithUser } from '../../hooks/type_models'
 import Img404 from '../../assets/error.webp'
@@ -34,7 +34,7 @@ const serverInfo = reactive({
 })
 // 服务器状态检测
 const serverStatus = reactive({
-    type: 'warning' as 'success' | 'error' | 'warning',
+    color: 'processing',
     icon: markRaw(CloudDownloadOutline), // 初始化时标记
     text: '检测中...',
     loading: false,
@@ -201,12 +201,12 @@ const checkServerStatus = useDebounceFn(async (ip: string) => {
 
     serverStatus.loading = true
     try {
-        serverStatus.type = 'warning'
+        serverStatus.color = 'processing'
         serverStatus.icon = markRaw(CloudDownloadOutline) // 动态赋值时标记
         serverStatus.text = '检测中...'
         updateServerStatus(await statusResponse(serverInfo.ip))
     } catch (err) {
-        serverStatus.type = 'error'
+        serverStatus.color = 'error'
         serverStatus.text = '检测失败'
     } finally {
         serverStatus.loading = false
@@ -215,11 +215,11 @@ const checkServerStatus = useDebounceFn(async (ip: string) => {
 
 const updateServerStatus = (data: Fetch_Status) => {
     if (data.online) {
-        serverStatus.type = 'success'
+        serverStatus.color = 'success'
         serverStatus.icon = markRaw(CloudDone) // 动态赋值时标记
         serverStatus.text = `在线 - ${data.players.online}/${data.players.max} 玩家`
     } else {
-        serverStatus.type = 'error'
+        serverStatus.color = 'error'
         serverStatus.icon = markRaw(CloudOffline) // 动态赋值时标记
         serverStatus.text = '离线'
     }
@@ -299,102 +299,90 @@ onMounted(async () => {
         )
     }
 })
-
-const theme = ref('light' as 'light' | 'dark')
-
-const updateTheme = (e?: MediaQueryListEvent) => {
-    const isDarkMode = e
-        ? e.matches
-        : window.matchMedia('(prefers-color-scheme: dark)').matches
-    theme.value = isDarkMode ? 'dark' : 'light'
-}
-
-watchEffect(() => {
-    updateTheme()
-})
-
-onMounted(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    mediaQuery.addEventListener('change', updateTheme)
-})
-
-onUnmounted(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    mediaQuery.removeEventListener('change', updateTheme)
-})
 </script>
 
 <template>
     <div class="edit">
-        <n-spin :show="serverInfo.loading">
+        <a-spin :spinning="serverInfo.loading">
             <div class="content-container">
                 <div v-if="serverInfo.error" class="error-container">
-                    <n-result status="404" :description="serverInfo.error">
-                        <template #footer>
-                            <n-button
-                                @click="$router.back()"
-                                v-if="serverInfo.code == 401"
-                            >
-                                返回
-                            </n-button>
-                            <n-button @click="refreshServerInfo" v-else>
-                                重试
-                            </n-button>
-                        </template>
+                    <a-result :title="serverInfo.error">
                         <template #icon>
                             <img
                                 :src="Img404"
                                 style="width: 50%; height: 50%"
                             />
                         </template>
-                    </n-result>
+                        <template #extra>
+                            <a-button
+                                @click="$router.back()"
+                                v-if="serverInfo.code == 401"
+                            >
+                                返回
+                            </a-button>
+                            <a-button @click="refreshServerInfo" v-else>
+                                重试
+                            </a-button>
+                        </template>
+                    </a-result>
                 </div>
 
                 <div v-else>
                     <h1 class="page-title">服务器信息</h1>
                     <div class="status-indicator">
-                        <n-tag :type="serverStatus.type" :bordered="false">
+                        <a-tag :color="serverStatus.color" :bordered="false">
                             <template #icon>
-                                <n-icon :component="serverStatus.icon" />
+                                <component
+                                    style="
+                                        height: 1em;
+                                        width: 1em;
+                                        line-height: 1em;
+                                        text-align: center;
+                                        display: inline-block;
+                                        position: relative;
+                                        fill: currentColor;
+                                    "
+                                    :is="serverStatus.icon"
+                                />
                             </template>
                             {{ serverStatus.text }}
-                        </n-tag>
+                        </a-tag>
                     </div>
 
                     <div class="form-item">
                         <label>服务器名称</label>
-                        <n-input
+                        <a-input
                             v-model:value="serverInfo.name"
                             placeholder="输入服务器名称"
                             :maxlength="32"
-                            clearable
+                            allow-clear
                         />
                     </div>
                     <div class="form-item">
                         <label>网站链接（可留空）</label>
-                        <n-input
+                        <a-input
                             v-model:value="serverInfo.link"
                             placeholder="可留空"
                             :maxlength="25"
-                            clearable
+                            allow-clear
                         />
                     </div>
                     <div class="form-item">
                         <label>服务器地址</label>
-                        <n-input
+                        <a-input
                             v-model:value="serverInfo.ip"
                             placeholder="输入IP地址和端口"
-                            :status="serverStatus.type"
-                            clearable
+                            :status="serverStatus.color"
+                            allow-clear
                         />
                     </div>
                     <div class="form-item">
                         <label>服务器版本</label>
-                        <n-input
+                        <a-input
                             v-model:value="serverInfo.version"
                             placeholder="输入服务器版本（如 1.20.1）"
                             :maxlength="32"
-                            clearable
+                            allow-clear
                         />
                     </div>
                     <div class="form-item">
@@ -408,34 +396,33 @@ onUnmounted(() => {
                             noMermaid
                             noUploadImg
                             class="md-editor"
-                            :theme="theme"
                         />
                     </div>
                     <!-- 标签 -->
                     <div class="form-item">
                         <label>标签</label>
-                        <n-dynamic-tags v-model:value="serverInfo.tags" />
+                        <DynamicTags v-model:value="serverInfo.tags" />
                     </div>
                     <!-- 保存按钮 -->
                     <div class="form-item" style="text-align: right">
-                        <n-button
+                        <a-button
                             type="primary"
                             @click="saveServerInfo"
                             :loading="serverInfo.loading"
                         >
                             保存
-                        </n-button>
-                        <n-button
+                        </a-button>
+                        <a-button
                             @click="clearDraft"
                             style="margin-left: 10px"
                             :disabled="!hasDraft"
                         >
                             清除草稿
-                        </n-button>
+                        </a-button>
                     </div>
                 </div>
             </div>
-        </n-spin>
+        </a-spin>
     </div>
 </template>
 
@@ -465,7 +452,7 @@ onUnmounted(() => {
     .status-indicator {
         margin-bottom: 24px;
 
-        .n-tag {
+        .a-tag {
             font-size: 0.95rem;
             padding: 8px 16px;
         }
