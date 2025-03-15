@@ -24,7 +24,7 @@ function getToken() {
 export const GetToken = getToken()
 
 export const ServerAPI_Token = createAlova({
-    baseURL: 'https://mscpoapi.tblstudio.cn/',
+    baseURL: 'https://mscpoapi.crashvibe.cn/',
     statesHook: VueHook,
     requestAdapter: adapterFetch(),
     // 全局请求拦截器

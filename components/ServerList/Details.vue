@@ -118,7 +118,7 @@ const formatDelay = (delay?: number) => {
                     </div>
 
                     <!-- 关键指标 -->
-                    <a-grid x-gap="24" y-gap="24" cols="2 s:3 m:4">
+                    <a-grid x-gap="24" y-gap="24" cols="2 s:3 m:4" class="key-stats">
                         <a-col>
                             <a-statistic label="在线玩家">
                                 {{ server.status?.players.online ?? '-' }}/{{
@@ -322,6 +322,7 @@ const formatDelay = (delay?: number) => {
             margin-top: 24px;
             color: @text-color-light;
             @media (prefers-color-scheme: dark) {
+                --n-title-text-color: @text-color-dark;
                 color: @text-color-dark;
             }
             .markdown-content {
