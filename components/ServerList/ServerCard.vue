@@ -97,13 +97,13 @@ const copyToClipboard = (event: MouseEvent) => {
         .then(() => {
             notification.success({
                 message: '复制成功！OwO',
-                duration: 2.5
+                duration: 2.5,
             })
         })
         .catch(() => {
             notification.error({
                 message: '复制失败，请重试！QAQ',
-                duration: 2.5
+                duration: 2.5,
             })
         })
 }
@@ -142,7 +142,7 @@ const copyToClipboard = (event: MouseEvent) => {
                 <div>
                     <a-input-group compact>
                         <a-tag
-                            style="height: 24px;"
+                            style="height: 24px"
                             :color="statusColor"
                             v-text="statusText"
                         ></a-tag>

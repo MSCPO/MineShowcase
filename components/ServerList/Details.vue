@@ -1,21 +1,6 @@
 <script setup lang="ts">
-// import {
-//     NAvatar,
-//     NTag,
-//     NSpace,
-//     NButton,
-//     NStatistic,
-//     NGrid,
-//     NGi,
-// } from 'naive-ui'
 import { ServerAPI_Token } from '../../hooks/api'
 import { MdPreview } from 'md-editor-v3'
-
-import {
-    CheckmarkCircleOutline,
-    WarningOutline,
-    CloudOfflineOutline,
-} from '@vicons/ionicons5'
 import { useRequest } from 'alova/client'
 import type { ServerManagers, Status } from '../../hooks/type_models'
 import IMG_noicon from '../../assets/noicon.svg'
@@ -78,13 +63,7 @@ const resultStatus = computed<ResultStatus>(() => {
             }
     }
 })
-// 状态图标
-const statusIcon = computed(() => {
-    if (!server.value?.status) return CloudOfflineOutline
-    return server.value.status.delay < 100
-        ? CheckmarkCircleOutline
-        : WarningOutline
-})
+
 // 状态颜色
 const statusColor = computed(() => {
     if (!server.value?.status) return 'error'
@@ -107,7 +86,7 @@ const formatDelay = (delay?: number) => {
                     <!-- 头部信息 -->
                     <div class="server-header">
                         <a-avatar
-                            class="n-img"
+                            class="a-img"
                             round
                             :size="120"
                             :src="server.status?.icon ?? IMG_noicon"

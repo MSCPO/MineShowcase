@@ -129,7 +129,7 @@ onMounted(() => {
                 <a-input
                     v-model:value="searchQuery"
                     placeholder="输入服务器名称、拼音或拼音首字母搜索..."
-                    clearable
+                    allow-clear
                     @keyup.enter="page = 1"
                 />
             </div>
@@ -167,7 +167,7 @@ onMounted(() => {
                     :permission="server.permission"
                     :detail="server.detail"
                 />
-                <div v-else class="skeleton" style="max-width: 20rem;">
+                <div v-else class="skeleton" style="max-width: 20rem">
                     <a-skeleton active />
                     <a-skeleton avatar active :paragraph="{ rows: 2 }" />
                 </div>
