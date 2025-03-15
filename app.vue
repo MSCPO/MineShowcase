@@ -3,10 +3,10 @@ useHead({
     link: [
         {
             rel: 'preconnect',
-            href: 'https://mscpoapi.tblstudio.cn',
+            href: 'https://mscpoapi.crashvibe.cn',
             crossorigin: 'anonymous',
         },
-        { rel: 'dns-prefetch', href: 'https://mscpoapi.tblstudio.cn' },
+        { rel: 'dns-prefetch', href: 'https://mscpoapi.crashvibe.cn' },
     ],
 })
 </script>

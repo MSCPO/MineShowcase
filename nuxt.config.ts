@@ -5,7 +5,7 @@ export default defineNuxtConfig({
         port: 3000,
     },
     site: {
-        url: 'https://mscpo.tblstudio.cn',
+        url: 'https://mscpo.crashvibe.cn',
         name: 'Minecraft集体宣传组织(MSCPO)',
         description:
             'Minecraft集体宣传组织(MSCPO) - 专业的Minecraft服务器宣传与技术交流平台，提供最新服务器资讯、开服教程和集体宣传片',
@@ -45,7 +45,6 @@ export default defineNuxtConfig({
             meta: [
                 { charset: 'utf-8' },
                 {
-                    hid: 'keywords',
                     name: 'keywords',
                     content:
                         'Minecraft服务器,MC服务器宣传,我的世界技术交流,集体宣传片,开服教程',
