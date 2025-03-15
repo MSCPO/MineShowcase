@@ -88,19 +88,19 @@ const onlineStatusTag = computed(() => {
 })
 </script>
 <template>
-    <n-card hoverable>
-        <n-spin :show="loading">
+    <a-card hoverable>
+        <a-spin :show="loading">
             <div class="server-card">
                 <!-- 服务器名称和IP -->
-                <n-text strong class="server-name">
+                <a-text strong class="server-name">
                     {{ serverData?.name || `服务器 ${serverId}` }}
-                    <n-tag v-if="serverData?.ip" size="small" :bordered="false">
+                    <a-tag v-if="serverData?.ip" size="small" :bordered="false">
                         {{ serverData.ip }}
-                    </n-tag>
-                </n-text>
+                    </a-tag>
+                </a-text>
 
                 <div class="status-indicator">
-                    <n-tag
+                    <a-tag
                         :type="onlineStatusTag.type"
                         size="small"
                         :bordered="false"
@@ -110,33 +110,33 @@ const onlineStatusTag = computed(() => {
                             <n-icon :component="onlineStatusTag.icon" />
                         </template>
                         {{ onlineStatusTag.text }}
-                    </n-tag>
+                    </a-tag>
                     <div
                         class="status-dot"
                         :class="onlineStatusTag.statusClass"
                     />
                 </div>
                 <!-- 服务器类型 -->
-                <n-text depth="2" class="server-type">
+                <a-text depth="2" class="server-type">
                     类型：{{ serverData?.type || '未知' }}
-                </n-text>
+                </a-text>
                 <!-- 服务器简介 -->
-                <n-text depth="3" class="server-desc">
+                <a-text depth="3" class="server-desc">
                     {{ truncateText(serverData?.desc || '暂无简介') }}
-                </n-text>
+                </a-text>
                 <!-- 操作按钮 -->
-                <n-space justify="end">
-                    <n-button
+                <a-space justify="end">
+                    <a-button
                         size="small"
                         :disabled="!serverData"
                         @click="handleManage"
                     >
                         查看
-                    </n-button>
-                </n-space>
+                    </a-button>
+                </a-space>
             </div>
-        </n-spin>
-    </n-card>
+        </a-spin>
+    </a-card>
 </template>
 
 <style scoped>
@@ -241,8 +241,8 @@ const onlineStatusTag = computed(() => {
     -webkit-box-orient: vertical;
 }
 
-.n-card-footer {
+.a-card-footer {
     padding-top: 12px;
-    border-top: 1px solid var(--n-border-color);
+    border-top: 1px solid var(--a-border-color);
 }
 </style>

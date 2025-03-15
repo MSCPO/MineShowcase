@@ -56,8 +56,8 @@ const gotoLogin = () => router.push('/auth')
 
 <template>
     <div class="user-panel">
-        <n-spin :show="loading">
-            <n-result
+        <a-spin :spinning="loading">
+            <a-result
                 v-if="isUnauthorized"
                 status="403"
                 title="未登录"
@@ -65,15 +65,15 @@ const gotoLogin = () => router.push('/auth')
                 size="large"
             >
                 <template #footer>
-                    <n-space justify="center">
-                        <n-button type="primary" @click="gotoLogin">
+                    <a-space justify="center">
+                        <a-button type="primary" @click="gotoLogin">
                             立即登录
-                        </n-button>
-                        <n-button @click="goBack">返回上一页</n-button>
-                    </n-space>
+                        </a-button>
+                        <a-button @click="goBack">返回上一页</a-button>
+                    </a-space>
                 </template>
-            </n-result>
-            <n-result
+            </a-result>
+            <a-result
                 v-else-if="error"
                 status="error"
                 title="加载失败"
@@ -81,16 +81,16 @@ const gotoLogin = () => router.push('/auth')
                 size="large"
             >
                 <template #footer>
-                    <n-space justify="center">
-                        <n-button type="primary" @click="send">重试</n-button>
-                        <n-button @click="goBack">返回上一页</n-button>
-                    </n-space>
+                    <a-space justify="center">
+                        <a-button type="primary" @click="send">重试</a-button>
+                        <a-button @click="goBack">返回上一页</a-button>
+                    </a-space>
                 </template>
-            </n-result>
+            </a-result>
 
-            <n-card v-else-if="token_status" hoverable>
+            <a-card v-else-if="token_status" hoverable>
                 <div class="profile-header">
-                    <n-avatar
+                    <a-avatar
                         round
                         :size="160"
                         :src="data.avatar_url || IMG_noicon"
@@ -100,96 +100,90 @@ const gotoLogin = () => router.push('/auth')
                         <h1 class="display-name">
                             {{ data.display_name || data.username }}
                         </h1>
-                        <n-space align="center">
+                        <a-space align="center">
                             <!-- 计划个性签名，或者创新的给自己贴标签 -->
-                        </n-space>
+                        </a-space>
                     </div>
                 </div>
 
-                <n-divider />
+                <a-divider />
 
                 <div class="info-grid">
                     <div class="info-item">
-                        <label><n-text depth="3">用户ID</n-text></label>
-                        <n-text strong>{{ data.id }}</n-text>
+                        <label>用户ID</label>
+                        {{ data.id }}
                     </div>
 
                     <div class="info-item">
-                        <label><n-text depth="3">注册邮箱</n-text></label>
-                        <n-text>{{ data.email }}</n-text>
+                        <label>注册邮箱</label>
+                        {{ data.email }}
                     </div>
 
                     <div class="info-item">
-                        <label><n-text depth="3">创建时间</n-text></label>
-                        <n-text>
-                            {{ formatDate(data.created_at) }}
-                        </n-text>
+                        <label>创建时间</label>
+                        {{ formatDate(data.created_at) }}
                     </div>
 
                     <div class="info-item">
-                        <label><n-text depth="3">最后登录</n-text></label>
-                        <n-text>
-                            {{ formatDate(data.last_login) }}
-                        </n-text>
+                        <label>最后登录</label>
+                        {{ formatDate(data.last_login) }}
                     </div>
                 </div>
 
-                <n-collapse-transition :show="showAdvanced">
-                    <div class="advanced-info">
-                        <n-divider dashed>高级信息</n-divider>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <label>
-                                    <n-text depth="3">登录账号</n-text>
-                                </label>
-                                <n-text>{{ data.username }}</n-text>
-                            </div>
-                            <div class="info-item">
-                                <label>
-                                    <n-text depth="3">账户类型</n-text>
-                                </label>
-                                <n-text>
-                                    {{
-                                        data.role === 'admin'
-                                            ? '管理员账户'
-                                            : '普通账户'
-                                    }}
-                                </n-text>
-                            </div>
+                <div class="advanced-info" v-if="showAdvanced">
+                    <a-divider style="border-color: #a6c3ee" dashed>高级信息</a-divider>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>
+                                <a-text depth="3">登录账号</a-text>
+                            </label>
+                            <a-text>{{ data.username }}</a-text>
+                        </div>
+                        <div class="info-item">
+                            <label>
+                                <a-text depth="3">账户类型</a-text>
+                            </label>
+                            <a-text>
+                                {{
+                                    data.role === 'admin'
+                                        ? '管理员账户'
+                                        : '普通账户'
+                                }}
+                            </a-text>
                         </div>
                     </div>
-                </n-collapse-transition>
+                </div>
 
                 <div class="action-bar">
-                    <n-button type="primary" dashed @click="toggleAdvanced">
+                    <a-button type="primary" dashed @click="toggleAdvanced">
                         {{ showAdvanced ? '收起详情' : '展开详情' }}
-                    </n-button>
-                    <!-- <n-button
+                    </a-button>
+                    <!-- <a-button
                         tag="a"
                         href="/settings"
                         type="primary"
                         class="edit-btn"
                     >
                         编辑资料
-                    </n-button> -->
+                    </a-button> -->
                 </div>
-            </n-card>
+            </a-card>
 
             <div class="server-list" v-if="token_status">
                 <h2 style="margin: 24px 0 16px">我的服务器</h2>
-                <n-empty
+                <a-empty
                     v-if="data?.servers?.length === 0"
                     description="您还没有任何服务器"
                     style="margin: 32px 0"
-                ></n-empty>
+                ></a-empty>
                 <!-- <template #extra>
-                <n-button size="small" @click="router.push('/create')">
+                <a-button size="small" @click="router.push('/create')">
                     创建新服务器
-                </n-button>
+                </a-button>
             </template> -->
 
-                <n-grid cols="1 600:2 960:3" x-gap="16" y-gap="16">
-                    <n-gi
+                <a-grid cols="1 600:2 960:3" x-gap="16" y-gap="16">
+                    <a-gi
                         v-for="[role, serverId] in data?.servers || []"
                         :key="serverId"
                     >
@@ -197,10 +191,10 @@ const gotoLogin = () => router.push('/auth')
                             :server-id="Number(serverId)"
                             :role="role"
                         />
-                    </n-gi>
-                </n-grid>
+                    </a-gi>
+                </a-grid>
             </div>
-        </n-spin>
+        </a-spin>
     </div>
 </template>
 
@@ -305,11 +299,11 @@ const gotoLogin = () => router.push('/auth')
     }
     margin-top: 24px;
 
-    .n-grid {
+    .a-grid {
         margin-bottom: 24px;
     }
 
-    .n-card {
+    .a-card {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -323,7 +317,7 @@ const gotoLogin = () => router.push('/auth')
     text-align: center;
     padding: 40px 20px;
 
-    .n-space {
+    .a-space {
         justify-content: center;
         gap: 16px;
     }
