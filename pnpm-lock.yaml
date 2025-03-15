@@ -32,6 +32,9 @@ importers:
       md-editor-v3:
         specifier: ^5.3.2
         version: 5.3.2(vue@3.5.13(typescript@5.8.2))
+      nuxt-style-extractor:
+        specifier: ^0.1.3
+        version: 0.1.3(magicast@0.3.5)
       recaptcha-v3:
         specifier: ^1.11.3
         version: 1.11.3
@@ -3431,6 +3434,9 @@ packages:
 
   nuxt-site-config@3.1.4:
     resolution: {integrity: sha512-AtSPCXDy4c9QgcRJuCFVTwCOMK+TBcYQyXcWzRq7wnd3M71tXyJisRmRnJ5pn1F89WTOtfgXIO/+HqRSl1lybw==}
+
+  nuxt-style-extractor@0.1.3:
+    resolution: {integrity: sha512-mdajcghgo7PyKXe0Xc3ZNdTcO9jOPakEt84hBJLYwto/gn57WRICijtSkylv/9PUFRFv6fOwKd3sNLKbBnmD0Q==}
 
   nuxt@3.16.0:
     resolution: {integrity: sha512-4j2tuHo+kcComQ1WrCD+i1w3UFOHrcnNH30cwiEY/WZZlBZOlC6DtUm6aBjhfpBFaMYsF4PbyKsNW+7FHwckHA==}
@@ -8847,6 +8853,14 @@ snapshots:
     transitivePeerDependencies:
       - magicast
       - vue
+
+  nuxt-style-extractor@0.1.3(magicast@0.3.5):
+    dependencies:
+      '@nuxt/kit': 3.16.0(magicast@0.3.5)
+      ohash: 1.1.6
+      pathe: 1.1.2
+    transitivePeerDependencies:
+      - magicast
 
   nuxt@3.16.0(@parcel/watcher@2.5.1)(@types/node@22.13.10)(db0@0.3.1)(eslint@9.22.0(jiti@2.4.2))(ioredis@5.6.0)(less@4.2.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.35.0)(terser@5.39.0)(typescript@5.8.2)(vite@6.2.1(@types/node@22.13.10)(jiti@2.4.2)(less@4.2.2)(terser@5.39.0)(yaml@2.7.0))(xml2js@0.6.2)(yaml@2.7.0):
     dependencies:

@@ -82,9 +82,19 @@ export default defineNuxtConfig({
     devtools: {
         enabled: true,
     },
-    modules: ['@nuxtjs/seo', '@nuxthub/core', 'nuxt-og-image', '@ant-design-vue/nuxt'],
+    styleExtractor: {
+        minify: true, // 是否开启压缩
+        removeUnused: true, // 是否移除未使用
+    },
+    modules: [
+        '@nuxtjs/seo',
+        '@nuxthub/core',
+        'nuxt-og-image',
+        '@ant-design-vue/nuxt',
+        'nuxt-style-extractor',
+    ],
     // Ant Design Vue Config
     antd: {
         extractStyle: true,
-    }
+    },
 })

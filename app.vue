@@ -13,8 +13,10 @@ useHead({
 
 <template>
     <a-extract-style>
-        <NuxtLayout>
-            <NuxtPage />
-        </NuxtLayout>
+        <a-config-provider>
+            <NuxtLayout>
+                <NuxtPage />
+            </NuxtLayout>
+        </a-config-provider>
     </a-extract-style>
 </template>
