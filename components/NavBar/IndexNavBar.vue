@@ -154,7 +154,7 @@ const filters = ref({
 }
 
 .stats-section {
-    .n-statistic {
+    .a-statistic {
         margin-bottom: 16px;
 
         &:last-child {
@@ -170,8 +170,8 @@ const filters = ref({
 }
 
 .filter-section {
-    .n-select,
-    .n-slider {
+    .a-select,
+    .a-slider {
         width: 100%;
         margin-bottom: 16px;
     }
@@ -183,7 +183,7 @@ const filters = ref({
         padding: 8px 0;
     }
 
-    .n-tag {
+    .a-tag {
         margin: 2px;
     }
 }

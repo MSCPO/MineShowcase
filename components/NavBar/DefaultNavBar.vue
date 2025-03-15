@@ -63,7 +63,7 @@ onBeforeUnmount(() => {
     }
 }
 .stats-section {
-    .n-statistic {
+    .a-statistic {
         margin-bottom: 16px;
 
         &:last-child {
