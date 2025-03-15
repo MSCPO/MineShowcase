@@ -9,19 +9,13 @@ import type {
     ReturnResponse,
     ReturnResponse_Register,
 } from '../../hooks/type_models'
-// import type {
-//     FormItemRule,
-//     NotificationType,
-//     UploadCustomRequestOptions,
-// } from 'naive-ui'
-// import { createDiscreteApi } from 'naive-ui'
 import { VueCropper } from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
-// import type { UploadInst } from 'naive-ui'
-// import type { FormInst } from 'naive-ui'
 import { computed } from 'vue'
+import { notification, message } from 'ant-design-vue'
+import type { Rule } from 'ant-design-vue/es/form'
+import type { FormInstance, UploadChangeParam } from 'ant-design-vue'
 
-const { notification } = createDiscreteApi(['notification'])
 const options = computed(() => {
     const prefix = form.value.email.split('@')[0]
     const suffixes = ['@gmail.com', '@163.com', '@qq.com']
@@ -31,8 +25,7 @@ const options = computed(() => {
     }))
 })
 // 在组件逻辑中添加
-const regFormRef = ref<FormInst | null>(null)
-const uploadRef = ref<UploadInst | null>(null)
+const regFormRef = ref<FormInstance | null>(null)
 const previewUrl = ref('')
 const showCropper = ref(false)
 const cropper = ref<InstanceType<typeof VueCropper>>()
@@ -43,47 +36,41 @@ onBeforeUnmount(() => {
         URL.revokeObjectURL(previewUrl.value)
     }
 })
-const handleFileChange = (options: UploadCustomRequestOptions) => {
-    const file = options.file.file
-    if (!file || !file.type.startsWith('image/')) {
-        Notify({
-            type: 'error',
-            content: '文件格式错误',
-            meta: '请选择图片文件',
-            duration: 2000,
-        })
-        clearUploadList()
-        return
+
+const beforeUpload = (file: File) => {
+    const isImage = file.type.startsWith('image/')
+    if (!isImage) {
+        message.error(' 文件格式错误：请选择图片文件')
+        return false
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-        Notify({
-            type: 'error',
-            content: '文件过大',
-            meta: '请选择小于 2MB 的图片',
-            duration: 2000,
-        })
-        clearUploadList()
-        return
+    const isLt2M = file.size / 1024 / 1024 < 2
+    if (!isLt2M) {
+        message.error(' 文件过大：请选择小于 2MB 的图片')
+        return false
     }
 
+    // 显示裁切模态框
     previewUrl.value = URL.createObjectURL(file)
     uploadFile.value = file
     showCropper.value = true
-    nextTick(() => {
-        if (cropper.value) {
-            cropper.value.src = previewUrl.value
-            cropper.value.refresh() // 强制刷新裁剪器
-        }
-    })
+    return false // 阻止自动上传
 }
+
+// 文件上传状态变化处理
+const handleChange = (info: UploadChangeParam) => {
+    if (info.file.status === 'error') {
+        message.error(' 上传失败')
+    }
+}
+
+// 确认裁切
 const confirmCrop = () => {
     cropper.value?.getCropBlob((blob: Blob) => {
         if (blob) {
-            // 保留原始文件扩展名和类型
             const ext = uploadFile.value?.name.split('.').pop() || 'png'
             const newFile = new File([blob], `avatar.${ext}`, {
-                type: blob.type, // 保持原始MIME类型
+                type: blob.type,
             })
             previewUrl.value = URL.createObjectURL(newFile)
             RegForm.value.avatar = newFile
@@ -91,23 +78,12 @@ const confirmCrop = () => {
         }
     })
 }
+
+// 清空上传列表
 const clearUploadList = () => {
     showCropper.value = false
-    uploadRef.value?.clear()
+    RegForm.value.avatar = undefined
 }
-
-const Notify = (info: {
-    type: NotificationType
-    content: string
-    meta: string
-    duration: number
-}) =>
-    notification[info.type]({
-        content: info.content,
-        meta: info.meta,
-        duration: info.duration,
-        keepAliveOnHover: true,
-    })
 
 const RegToken = defineProps<{ token?: string }>()
 
@@ -145,28 +121,24 @@ onMounted(async () => {
                 VerifyEmail.value.regstatus = true
                 VerifyEmail.value.detail = `ヾ(^▽^*))) ${response.detail}`
                 VerifyEmail.value.style.color = 'green'
-                Notify({
-                    type: 'success',
-                    content: '邮箱验证通过',
-                    meta: '邮箱验证成功,请填写详细信息',
-                    duration: 2000,
+                notification.success({
+                    message: '邮箱验证通过',
+                    description: '邮箱验证成功,请填写详细信息',
+                    duration: 2,
                 })
             } else {
                 VerifyEmail.value.detail = `〒▽〒 ${response.detail}`
                 VerifyEmail.value.style.color = 'red'
-                Notify({
-                    type: 'error',
-                    content: '邮箱验证失败',
-                    meta: '请检查邮箱验证链接是否正确',
-                    duration: 2000,
+                notification.error({
+                    message: '邮箱验证失败',
+                    description: '请检查邮箱验证链接是否正确',
+                    duration: 2,
                 })
             }
         } catch (error) {
-            Notify({
-                type: 'error',
-                content: '验证失败',
-                meta: '',
-                duration: 2000,
+            notification.error({
+                message: '验证失败',
+                duration: 2,
             })
         }
     }
@@ -180,31 +152,35 @@ const RegForm = ref({
     avatar: undefined as File | undefined,
 })
 const RegRules = {
+    avatar: [
+        {
+            validator: (rule: Rule, value: File | undefined) => {
+                if (!value) {
+                    return Promise.reject(new Error('请上传头像'))
+                }
+                return Promise.resolve()
+            },
+            trigger: 'change',
+            required: true,
+        },
+    ],
     display_name: [
         { required: true, message: '请输入用户名', trigger: 'blur' },
     ],
     f_password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
     s_password: [
         {
-            validator(rule: FormItemRule, value: string) {
-                if (!value) return new Error('请再次输入密码')
-                if (RegForm.value.f_password !== value)
-                    return new Error('两次输入的密码不一致')
-                return true
+            required: true,
+            validator: (rule: Rule, value: string) => {
+                if (!value) {
+                    return Promise.reject(new Error('请再次输入密码'))
+                }
+                if (RegForm.value.f_password !== value) {
+                    return Promise.reject(new Error('两次输入的密码不一致'))
+                }
+                return Promise.resolve()
             },
             trigger: 'blur',
-            required: true,
-        },
-    ],
-    avatar: [
-        {
-            validator: (rule: FormItemRule, value: File | undefined) => {
-                if (!value) {
-                    return new Error('请上传头像')
-                }
-                return true
-            },
-            trigger: 'change',
         },
     ],
 }
@@ -219,33 +195,30 @@ const handleRegSubmit = async () => {
     try {
         await regFormRef.value?.validate()
     } catch (error) {
-        Notify({
-            type: 'error',
-            content: '表单验证失败',
-            meta: '请检查表单是否填写正确',
-            duration: 2000,
+        notification.error({
+            message: '表单验证失败',
+            description: '请检查表单是否填写正确',
+            duration: 2,
         })
         return
     }
 
     // 如果验证通过，继续注册逻辑
     if (!VerifyEmail.value.regstatus) {
-        Notify({
-            type: 'error',
-            content: '邮箱未验证',
-            meta: '请先验证邮箱',
-            duration: 2000,
+        notification.error({
+            message: '邮箱未验证',
+            description: '请先验证邮箱',
+            duration: 2,
         })
         return
     }
 
     const formData = new FormData()
     if (!RegForm.value.avatar) {
-        Notify({
-            type: 'error',
-            content: '头像未上传',
-            meta: '请上传头像',
-            duration: 2000,
+        notification.error({
+            message: '头像未上传',
+            description: '请上传头像',
+            duration: 2,
         })
         return
     }
@@ -262,48 +235,42 @@ const handleRegSubmit = async () => {
 
     const response = await registerUser(formData)
     if (response.code === 200) {
-        Notify({
-            type: 'success',
-            content: '已成功注册！',
-            meta: '请用新的账户密码登录网站',
-            duration: 2000,
+        notification.success({
+            message: '已成功注册！',
+            description: '请用新的账户密码登录网站',
+            duration: 2,
         })
     }
     if (response.code === 400) {
-        Notify({
-            type: 'error',
-            content: '请求参数错误',
-            meta: response.detail,
-            duration: 2000,
+        notification.error({
+            message: '请求参数错误',
+            description: response.detail,
+            duration: 2,
         })
     } else if (response.code === 422) {
-        Notify({
-            type: 'error',
-            content: 'reCAPTCHA 验证失败',
-            meta: response.detail,
-            duration: 2000,
+        notification.error({
+            message: 'reCAPTCHA 验证失败',
+            description: response.detail,
+            duration: 2,
         })
         captchaKey.value += 1
     } else if (response.code === 404) {
-        Notify({
-            type: 'error',
-            content: 'Token 未找到或已过期',
-            meta: response.detail,
-            duration: 2000,
+        notification.error({
+            message: 'Token 未找到或已过期',
+            description: response.detail,
+            duration: 2,
         })
     } else if (response.code === 409) {
-        Notify({
-            type: 'error',
-            content: 'Token 未验证',
-            meta: response.detail,
-            duration: 2000,
+        notification.error({
+            message: 'Token 未验证',
+            description: response.detail,
+            duration: 2,
         })
     } else if (response.code === 500) {
-        Notify({
-            type: 'error',
-            content: '服务器内部错误',
-            meta: response.detail,
-            duration: 2000,
+        notification.error({
+            message: '服务器内部错误',
+            description: response.detail,
+            duration: 2,
         })
     }
     captchaKey.value++
@@ -325,26 +292,23 @@ const captchaKey = ref(0)
 const handleMailSubmit = async () => {
     const response = await verifyEmail()
     if (response.code === 200) {
-        Notify({
-            type: 'success',
-            content: '验证邮件已发送',
-            meta: '请查收您的邮箱',
-            duration: 2000,
+        notification.success({
+            message: '验证邮件已发送',
+            description: '请查收您的邮箱',
+            duration: 2,
         })
     } else if (response.code === 400 && response.detail) {
-        Notify({
-            type: 'error',
-            content: response.detail,
-            meta: '请重试',
-            duration: 2000,
+        notification.error({
+            message: response.detail,
+            description: '请重试',
+            duration: 2,
         })
         captchaKey.value += 1
     } else if (response.code === 409) {
-        Notify({
-            type: 'error',
-            content: '邮箱已存在',
-            meta: '请使用其他邮箱',
-            duration: 2000,
+        notification.error({
+            message: '邮箱已存在',
+            description: '请使用其他邮箱',
+            duration: 2,
         })
     }
     captchaKey.value++
@@ -354,7 +318,7 @@ const handleMailSubmit = async () => {
 
 <template>
     <h2>注册</h2>
-    <n-form
+    <a-form
         ref="regFormRef"
         :model="RegForm"
         :rules="RegRules"
@@ -362,46 +326,55 @@ const handleMailSubmit = async () => {
     >
         <p :style="VerifyEmail.style">{{ VerifyEmail.detail }}</p>
 
-        <n-form-item path="display_name" label="昵称">
-            <n-input
+        <a-form-item name="avatar" label="头像">
+            <a-upload
+                name="avatar"
+                accept="image/*"
+                list-type="picture-card"
+                :show-upload-list="false"
+                :before-upload="beforeUpload"
+                :supportServerRender="true"
+                @change="handleChange"
+            >
+                <img
+                    v-if="RegForm.avatar"
+                    :src="previewUrl"
+                    alt="avatar"
+                    style="width: 100%"
+                />
+                <div v-else>
+                    <plus-outlined />
+                    <div class="ant-upload-text">Upload</div>
+                </div>
+            </a-upload>
+        </a-form-item>
+
+        <a-form-item name="display_name" label="昵称">
+            <a-input
                 v-model:value="RegForm.display_name"
                 @keydown.enter.prevent
                 placeholder="你の名字"
             />
-        </n-form-item>
+        </a-form-item>
 
-        <n-form-item path="f_password" label="密码">
-            <n-input
+        <a-form-item name="f_password" label="密码">
+            <a-input
                 type="password"
                 v-model:value="RegForm.f_password"
                 placeholder="输入绚丽的密码"
             />
-        </n-form-item>
+        </a-form-item>
 
-        <n-form-item path="s_password" label="确认密码">
-            <n-input
+        <a-form-item name="s_password" label="确认密码">
+            <a-input
                 type="password"
                 v-model:value="RegForm.s_password"
                 placeholder="再输入一次绚丽的密码"
             />
-        </n-form-item>
+        </a-form-item>
 
-        <n-form-item path="avatar" label="头像">
-            <n-upload
-                ref="uploadRef"
-                accept="image/*"
-                :show-file-list="false"
-                :custom-request="handleFileChange"
-            >
-                <div v-if="RegForm.avatar" class="preview-container">
-                    <n-image width="100" :src="previewUrl" preview-disabled />
-                </div>
-                <n-button v-else>选择头像文件</n-button>
-            </n-upload>
-        </n-form-item>
-
-        <n-row :gutter="[0, 24]">
-            <n-col :span="24">
+        <a-row :gutter="[0, 24]">
+            <a-col :span="24">
                 <div class="form-actions">
                     <reCaptcha
                         v-if="data"
@@ -411,34 +384,34 @@ const handleMailSubmit = async () => {
                         action="submit"
                         :key="captchaKey"
                     >
-                        <n-button
+                        <a-button
                             type="primary"
                             :disabled="!site_key"
                             @click="handleRegSubmit"
                         >
                             注册
-                        </n-button>
+                        </a-button>
                     </reCaptcha>
                 </div>
-            </n-col>
-        </n-row>
-    </n-form>
+            </a-col>
+        </a-row>
+    </a-form>
 
-    <n-form :model="form" :rules="rules" v-else>
-        <n-form-item path="email" label="邮箱">
-            <n-auto-complete
+    <a-form :model="form" :rules="rules" v-else>
+        <a-form-item path="email" label="邮箱">
+            <a-auto-complete
                 v-model:value="form.email"
                 placeholder="输入尊贵的邮箱"
                 :input-props="{
                     autocomplete: 'disabled',
                 }"
                 :options="options"
-                clearable
+                allow-clear
             />
-        </n-form-item>
+        </a-form-item>
 
-        <n-row :gutter="[0, 24]">
-            <n-col :span="24">
+        <a-row :gutter="[0, 24]">
+            <a-col :span="24">
                 <div class="form-actions">
                     <reCaptcha
                         v-if="data"
@@ -448,26 +421,28 @@ const handleMailSubmit = async () => {
                         action="submit"
                         :key="captchaKey"
                     >
-                        <n-button
+                        <a-button
                             type="primary"
                             :disabled="!site_key"
                             @click="handleMailSubmit"
                         >
                             验证并继续
-                        </n-button>
+                        </a-button>
                     </reCaptcha>
                 </div>
-            </n-col>
-        </n-row>
-    </n-form>
+            </a-col>
+        </a-row>
+    </a-form>
 
     <!-- 修复2: 优化Cropper模态框显示 -->
-    <n-modal
-        v-model:show="showCropper"
-        :mask-closable="false"
+    <a-modal
+        v-model:open="showCropper"
+        :maskClosable="false"
         preset="card"
         style="width: 400px"
         title="图片裁切"
+        @ok="confirmCrop"
+        @cancel="clearUploadList"
     >
         <vue-cropper
             ref="cropper"
@@ -481,19 +456,15 @@ const handleMailSubmit = async () => {
             style="height: 400px; width: 100%"
         />
         <template #footer>
-            <n-space justify="end">
-                <n-button @click="clearUploadList">取消</n-button>
-                <n-button type="primary" @click="confirmCrop">确认</n-button>
-            </n-space>
+            <a-space justify="end">
+                <a-button @click="clearUploadList">取消</a-button>
+                <a-button type="primary" @click="confirmCrop">确认</a-button>
+            </a-space>
         </template>
-    </n-modal>
+    </a-modal>
 </template>
 
 <style scoped>
-.preview-container {
-    margin-top: 12px;
-}
-
 .form-actions {
     display: flex;
     justify-content: flex-end;
