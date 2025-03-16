@@ -121,7 +121,7 @@ const handleMouseLeave = () => {
             <a-dropdown v-if="token_status && avatar_url">
                 <div class="avatar-wrapper">
                     <a-avatar
-                        size="medium"
+                        size="default"
                         :src="avatar_url"
                         :alt="username + ' 的头像'"
                         role="img"
