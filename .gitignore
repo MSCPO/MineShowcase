@@ -28,3 +28,6 @@ logs
 .vercel
 
 .wrangler
+
+# other
+.trae

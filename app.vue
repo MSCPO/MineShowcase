@@ -3,6 +3,8 @@ import { theme } from 'ant-design-vue'
 import '~/assets/css/index.less'
 
 const isDarkMode = useState<boolean>('isDarkMode', () => false)
+const route = useRoute()
+const key = computed(() => route.path)
 
 const updateTheme = (e?: MediaQueryListEvent) => {
     if (typeof window !== 'undefined') {
@@ -38,8 +40,8 @@ onMounted(() => {
                     : theme.defaultAlgorithm,
             }"
         >
-            <NuxtLayout>
-                <NuxtPage />
+            <NuxtLayout :key="key">
+                <NuxtPage keepalive :key="key" />
             </NuxtLayout>
         </a-config-provider>
     </a-extract-style>
