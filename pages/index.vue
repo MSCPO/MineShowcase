@@ -5,7 +5,7 @@ import BgImage from '@/assets/bg.webp'
 
 // 设置使用home布局，仅首页使用
 definePageMeta({
-    layout: 'home'
+    layout: 'home',
 })
 
 // 设置页面标题
@@ -14,13 +14,14 @@ useHead({
     script: [
         {
             type: 'module',
-            src: 'https://unpkg.com/@splinetool/viewer@1.9.87/build/spline-viewer.js'
-        }
-    ]
+            src: 'https://unpkg.com/@splinetool/viewer@1.9.87/build/spline-viewer.js',
+        },
+    ],
 })
 
 const isLoaded = ref(false)
 const showContent = ref(false)
+const splineKey = ref('defaultKey')
 
 onMounted(() => {
     // 添加加载动画效果
@@ -34,21 +35,25 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="home-container" :class="{ 'loaded': isLoaded }">
+    <div class="home-container" :class="{ loaded: isLoaded }">
         <ClientOnly>
             <div class="spline-bg" :key="splineKey">
-                <spline-viewer 
+                <spline-viewer
                     url="https://prod.spline.design/PmS-CR5jQj2Lf6R8/scene.splinecode"
                     v-if="showContent"
-                    @load="() => isLoaded = true"
+                    @load="() => (isLoaded = true)"
                 />
             </div>
         </ClientOnly>
 
-        <div class="content-wrapper" :class="{ 'show': showContent }">
+        <div class="content-wrapper" :class="{ show: showContent }">
             <div class="logo-container">
                 <img :src="Logo" alt="MSCPO Logo" class="logo" />
-                <h1 class="main-title">MINECRAFT<br /><span>集体宣传组织</span></h1>
+                <h1 class="main-title">
+                    MINECRAFT
+                    <br />
+                    <span>集体宣传组织</span>
+                </h1>
             </div>
 
             <div class="description">
@@ -79,7 +84,6 @@ onMounted(() => {
         </div>
     </div>
 </template>
-
 <style scoped>
 .home-container {
     min-height: 100vh;
@@ -91,7 +95,9 @@ onMounted(() => {
     overflow: hidden;
     padding: 2rem;
     color: #333;
-    transition: opacity 0.8s ease;
+    transition:
+        opacity 0.8s ease,
+        background-color 0.3s ease;
     opacity: 0;
     background-color: white;
 }
@@ -115,8 +121,6 @@ onMounted(() => {
     opacity: 1;
 }
 
-
-
 .content-wrapper {
     position: relative;
     z-index: 2;
@@ -125,7 +129,7 @@ onMounted(() => {
     transform: translateY(30px);
     opacity: 0;
     transition: all 0.8s ease;
-    margin-left: 10%;
+    margin-left: max(10%, 2rem);
     user-select: none;
 }
 
@@ -150,7 +154,7 @@ onMounted(() => {
 }
 
 .main-title {
-    font-size: 3rem;
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 800;
     letter-spacing: 2px;
     margin: 0;
@@ -161,39 +165,42 @@ onMounted(() => {
 }
 
 .main-title span {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
     font-weight: 600;
 }
 
 .description {
     margin-bottom: 2.5rem;
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 3vw, 1.2rem);
     line-height: 1.6;
     color: #666;
 }
 
 .cta-container {
     display: flex;
-    gap: 1.5rem;
+    gap: clamp(0.8rem, 2vw, 1.5rem);
     justify-content: flex-start;
     margin-bottom: 3rem;
     flex-wrap: wrap;
 }
 
 .cta-button {
-    display: inline-block;
-    background: linear-gradient(135deg, #00a8e8 0%, #0077cc 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.8rem 2rem;
-    border-radius: 50px;
+    border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
     letter-spacing: 1px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(110, 110, 110, 0.7);
+    box-shadow: 0 4px 15px rgba(110, 110, 110, 0.3);
     z-index: 1;
+    min-width: 160px;
+    text-align: center;
 }
 
 .cta-button::before {
@@ -216,6 +223,7 @@ onMounted(() => {
 .cta-button.primary {
     background: linear-gradient(135deg, #00a8e8 0%, #0077cc 100%);
     color: white;
+    border: none;
 }
 
 .cta-button.primary:hover {
@@ -237,14 +245,15 @@ onMounted(() => {
 .features {
     display: flex;
     justify-content: flex-start;
-    gap: 2rem;
+    gap: clamp(1rem, 2vw, 2rem);
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .feature-item {
     padding: 0.8rem 1.5rem;
     background: rgba(0, 168, 232, 0.15);
-    border-radius: 50px;
+    border-radius: 8px;
     backdrop-filter: blur(5px);
     border: 1px solid rgba(0, 168, 232, 0.3);
     transition: all 0.3s ease;
@@ -269,26 +278,22 @@ onMounted(() => {
     }
 }
 
-/* 响应式设计 */
+/* 增强响应式设计 */
 @media (max-width: 768px) {
-    .main-title {
-        font-size: 2.5rem;
-    }
-
-    .main-title span {
-        font-size: 1.5rem;
-    }
-
-    .description {
-        font-size: 1rem;
+    .content-wrapper {
+        margin-left: 5%;
     }
 
     .cta-container {
-        gap: 1rem;
+        justify-content: center;
+    }
+
+    .cta-button {
+        width: 100%;
     }
 
     .features {
-        gap: 1rem;
+        justify-content: center;
     }
 
     .spline-bg {
@@ -299,6 +304,26 @@ onMounted(() => {
     .spline-bg spline-viewer {
         width: 180vw;
         height: 180vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-container {
+        padding: 1.5rem;
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+    }
+
+    .logo {
+        width: 100px;
+        height: 100px;
+    }
+
+    .feature-item {
+        width: 100%;
+        text-align: center;
     }
 }
 </style>
