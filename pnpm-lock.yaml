@@ -26,6 +26,9 @@ importers:
       alova:
         specifier: ^3.2.10
         version: 3.2.10
+      animejs:
+        specifier: ^4.0.2
+        version: 4.0.2
       ant-design-vue:
         specifier: ^4.2.6
         version: 4.2.6(vue@3.5.13(typescript@5.8.3))
@@ -2531,6 +2534,9 @@ packages:
   alova@3.2.10:
     resolution: {integrity: sha512-OHMuSNUbIUEsAq6q5DabISNgFMIXqrC/DPBQv1QJEwxW3fWlYlaF6Vr8b4iqwZnUd2+0rCmFm9GnpKWk7vvx2w==}
     engines: {node: '>= 18.0.0'}
+
+  animejs@4.0.2:
+    resolution: {integrity: sha512-f0L/kSya2RF23iMSF/VO01pMmLwlAFoiQeNAvBXhEyLzIPd2/QTBRatwGUqkVCC6seaAJYzAkGir55N4SL+h3A==}
 
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
@@ -9486,6 +9492,8 @@ snapshots:
     dependencies:
       '@alova/shared': 1.1.2
       rate-limiter-flexible: 5.0.5
+
+  animejs@4.0.2: {}
 
   ansi-regex@5.0.1: {}
 

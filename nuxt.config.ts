@@ -2,9 +2,7 @@ import content from '@originjs/vite-plugin-content'
 // import { pwa } from './config/pwa'
 export default defineNuxtConfig({
     vue: {
-        compilerOptions: {
-            isCustomElement: (tag) => tag === 'spline-viewer'
-        }
+        compilerOptions: {}
     },
     devServer: {
         host: '0.0.0.0',

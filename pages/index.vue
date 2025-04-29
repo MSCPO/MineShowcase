@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import Logo from '@/assets/logo.svg'
-import BgImage from '@/assets/bg.webp'
+import GridBackground from '@/components/Background/GridBackground.vue'
 
 // 设置使用home布局，仅首页使用
 definePageMeta({
@@ -10,18 +10,11 @@ definePageMeta({
 
 // 设置页面标题
 useHead({
-    title: 'Minecraft集体宣传组织(MSCPO)',
-    script: [
-        {
-            type: 'module',
-            src: 'https://unpkg.com/@splinetool/viewer@1.9.87/build/spline-viewer.js',
-        },
-    ],
+    title: 'Minecraft集体宣传组织(MSCPO)'
 })
 
 const isLoaded = ref(false)
 const showContent = ref(false)
-const splineKey = ref('defaultKey')
 
 onMounted(() => {
     // 添加加载动画效果
@@ -36,16 +29,7 @@ onMounted(() => {
 
 <template>
     <div class="home-container" :class="{ loaded: isLoaded }">
-        <ClientOnly>
-            <div class="spline-bg" :key="splineKey">
-                <spline-viewer
-                    url="https://prod.spline.design/PmS-CR5jQj2Lf6R8/scene.splinecode"
-                    v-if="showContent"
-                    @load="() => (isLoaded = true)"
-                />
-            </div>
-        </ClientOnly>
-
+        <GridBackground />
         <div class="content-wrapper" :class="{ show: showContent }">
             <div class="logo-container">
                 <img :src="Logo" alt="MSCPO Logo" class="logo" />
@@ -99,23 +83,10 @@ onMounted(() => {
         opacity 0.8s ease,
         background-color 0.3s ease;
     opacity: 0;
-    background-color: white;
+    background-color: transparent;
 }
 
-.spline-bg {
-    position: absolute;
-    top: -10vh;
-    left: -20vw;
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
-    object-fit: none;
-}
 
-.spline-bg spline-viewer {
-    width: 125%;
-    height: 125%;
-}
 
 .home-container.loaded {
     opacity: 1;
@@ -124,13 +95,16 @@ onMounted(() => {
 .content-wrapper {
     position: relative;
     z-index: 2;
-    max-width: 600px;
+    max-width: 500px;
     width: 100%;
     transform: translateY(30px);
     opacity: 0;
     transition: all 0.8s ease;
     margin-left: max(10%, 2rem);
     user-select: none;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
 }
 
 .content-wrapper.show {
@@ -233,8 +207,8 @@ onMounted(() => {
 
 .cta-button.secondary {
     background: transparent;
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.7);
+    color: #333;
+    border: 2px solid rgba(0, 168, 232, 0.7);
 }
 
 .cta-button.secondary:hover {
@@ -296,15 +270,7 @@ onMounted(() => {
         justify-content: center;
     }
 
-    .spline-bg {
-        top: -10vh;
-        left: -60vw;
-    }
-
-    .spline-bg spline-viewer {
-        width: 180vw;
-        height: 180vh;
-    }
+    
 }
 
 @media (max-width: 480px) {
@@ -313,7 +279,9 @@ onMounted(() => {
     }
 
     .content-wrapper {
-        margin-left: 0;
+        margin-left: -0.5rem;
+        margin-top: -4rem;
+        padding: 0.5rem;
     }
 
     .logo {
