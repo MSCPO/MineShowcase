@@ -3,12 +3,20 @@
 </script>
 
 <template>
-    <div class="home-layout">
-        <slot />
+    <div class="layout">
+        <header class="header">
+            <Header />
+        </header>
+        <div class="main">
+            <div class="home-layout">
+                <slot />
+            </div>
+        </div>
     </div>
 </template>
 
 <style lang="less" scoped>
+@import '../assets/css/default.less';
 .home-layout {
     width: 100%;
 }

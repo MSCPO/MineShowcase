@@ -10,7 +10,7 @@ definePageMeta({
 
 // 设置页面标题
 useHead({
-    title: 'Minecraft集体宣传组织(MSCPO)'
+    title: 'Minecraft集体宣传组织(MSCPO)',
 })
 
 const isLoaded = ref(false)
@@ -41,7 +41,7 @@ onMounted(() => {
             </div>
 
             <div class="description">
-                <p>专业的Minecraft服务器宣传与技术交流平台</p>
+                <p>Minecraft 服务器宣传与技术交流平台</p>
                 <p>提供服务器列表、教程和集体宣传</p>
             </div>
 
@@ -70,7 +70,7 @@ onMounted(() => {
 </template>
 <style scoped>
 .home-container {
-    min-height: 100vh;
+    min-height: 90vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -85,8 +85,6 @@ onMounted(() => {
     opacity: 0;
     background-color: transparent;
 }
-
-
 
 .home-container.loaded {
     opacity: 1;
@@ -133,7 +131,7 @@ onMounted(() => {
     letter-spacing: 2px;
     margin: 0;
     line-height: 1.2;
-    background: linear-gradient(135deg, #333 0%, #00a8e8 100%);
+    background: linear-gradient(135deg, #619787 0%, #00a8e8 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -147,7 +145,7 @@ onMounted(() => {
     margin-bottom: 2.5rem;
     font-size: clamp(1rem, 3vw, 1.2rem);
     line-height: 1.6;
-    color: #666;
+    color: #bdbdbd;
 }
 
 .cta-container {
@@ -163,7 +161,7 @@ onMounted(() => {
     align-items: center;
     justify-content: center;
     padding: 0.8rem 2rem;
-    border-radius: 8px;
+    border-radius: 3px;
     text-decoration: none;
     font-weight: 600;
     font-size: clamp(0.9rem, 2.5vw, 1.1rem);
@@ -207,7 +205,7 @@ onMounted(() => {
 
 .cta-button.secondary {
     background: transparent;
-    color: #333;
+    color: white;
     border: 2px solid rgba(0, 168, 232, 0.7);
 }
 
@@ -225,9 +223,9 @@ onMounted(() => {
 }
 
 .feature-item {
-    padding: 0.8rem 1.5rem;
+    padding: 0.4rem 1.5rem;
     background: rgba(0, 168, 232, 0.15);
-    border-radius: 8px;
+    border-radius: 3px;
     backdrop-filter: blur(5px);
     border: 1px solid rgba(0, 168, 232, 0.3);
     transition: all 0.3s ease;
@@ -270,12 +268,8 @@ onMounted(() => {
         justify-content: center;
     }
 
-    
-}
-
-@media (max-width: 480px) {
-    .home-container {
-        padding: 1.5rem;
+    .feature-item {
+        flex: 1 1 45%; /* Adjusting width for better responsiveness */
     }
 
     .content-wrapper {
