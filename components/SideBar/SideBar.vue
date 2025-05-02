@@ -1,9 +1,18 @@
 <script setup lang="ts">
-import { watch, shallowRef } from 'vue'
+import { watch, shallowRef, provide } from 'vue'
 import Stats from './components/stats.vue'
 import Recommend from './components/recommend.vue'
 import Filter from './components/filter.vue'
 import { useRoute } from 'vue-router'
+
+// 定义事件处理函数
+const handleFilterChange = (filterOptions: any) => {
+    // 使用自定义事件将筛选条件发送给父组件
+    emit('filter-change', filterOptions)
+}
+
+// 定义事件
+const emit = defineEmits(['filter-change'])
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute()
@@ -54,11 +63,8 @@ watch(
 <template>
     <div class="content-wrapper">
         <transition-group name="slide" tag="div">
-            <component
-                v-for="(component, index) in SideBarComponents"
-                :is="component"
-                :key="index"
-            />
+            <component v-for="(component, index) in SideBarComponents" :is="component" :key="index"
+                @filter-change="handleFilterChange" />
         </transition-group>
     </div>
 </template>
@@ -66,43 +72,89 @@ watch(
 @import '@/assets/css/variables.less';
 
 .content-wrapper {
-    padding: 0.5rem;
+    padding: 0.75rem;
+    max-height: 100%;
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+
+        @media (prefers-color-scheme: dark) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    }
+
+    @media (max-width: 768px) {
+        padding: 0.5rem;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        /* 增强iOS滚动体验 */
+    }
 }
 
 .section {
     width: 100%;
     border: 0px;
     background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+
     @media (prefers-color-scheme: dark) {
         background: @surface-dark;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
-    margin-bottom: 20px;
+
+    margin-bottom: 16px;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        @media (prefers-color-scheme: dark) {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+    }
 
     .card-title {
-        font-weight: bold;
+        font-weight: 600;
         font-size: 16px;
         color: @text-color-light;
+        padding: 12px 0;
+
         @media (prefers-color-scheme: dark) {
             color: @text-color-dark;
         }
-        padding: 5px 0;
+    }
+
+    @media (max-width: 768px) {
+        border-radius: 6px;
+        margin-bottom: 12px;
     }
 }
 
+/* 动画效果 */
 .slide-enter-active {
     transition:
-        transform 0.5s ease,
-        opacity 1s ease;
+        transform 0.4s ease,
+        opacity 0.5s ease;
 }
+
 .slide-leave-active {
     transition:
-        transform 0.5s ease,
-        opacity 0.1s ease;
+        transform 0.3s ease,
+        opacity 0.2s ease;
 }
 
 .slide-enter-from,
 .slide-leave-to {
-    transform: translateY(-100%);
+    transform: translateY(-20px);
     opacity: 0;
 }
 

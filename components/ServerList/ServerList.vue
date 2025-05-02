@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, computed, defineAsyncComponent } from 'vue'
+import { ref, watch, onMounted, computed, defineAsyncComponent, inject } from 'vue'
 import { ServerAPI } from '~/api'
 import type { List, Status } from '~/api/models'
 
@@ -15,11 +15,39 @@ const ServersTotal = ref(0)
 const isVisible = ref(false)
 const searchQuery = ref('')
 const showAllServers = ref(false)
+
+// 筛选条件
+const filterOptions = ref({
+    playerRange: [0, 500] as [number, number],
+    modes: [] as string[],
+    authModes: [] as string[],
+    tags: [] as string[]
+})
+
 interface ServerWithPinyin extends Status {
     pinyin?: string // 全拼
     initials?: string // 拼音首字母
 }
 const serverDataWithPinyin = ref<ServerWithPinyin[]>([])
+
+// 处理筛选组件发出的筛选事件
+const handleFilterChange = (options: any) => {
+    filterOptions.value = options
+    page.value = 1 // 重置页码
+}
+
+// 接收从布局组件提供的筛选条件
+const injectedFilterOptions = inject('filterOptions', null)
+
+// 监听注入的筛选选项变化
+if (injectedFilterOptions) {
+    watch(() => injectedFilterOptions.value, (newOptions) => {
+        if (newOptions) {
+            filterOptions.value = newOptions
+            page.value = 1 // 重置页码
+        }
+    }, { immediate: true })
+}
 
 const convertToPinyin = async (name: string) => {
     const pinyin = await import('tiny-pinyin')
@@ -58,6 +86,39 @@ const filteredData = computed(() => {
     // 如果不显示所有服务器，则只显示已认证的服务器
     if (!showAllServers.value) {
         result = result.filter((server) => server.is_member === true)
+    }
+
+    // 根据筛选条件过滤
+    // 1. 游戏版本筛选
+    if (filterOptions.value.modes && filterOptions.value.modes.length > 0) {
+        result = result.filter(server =>
+            filterOptions.value.modes.includes(server.type)
+        )
+    }
+
+    // 2. 认证模式筛选
+    if (filterOptions.value.authModes && filterOptions.value.authModes.length > 0) {
+        result = result.filter(server =>
+            filterOptions.value.authModes.includes(server.auth_mode)
+        )
+    }
+
+    // 3. 玩家数量范围筛选
+    const [minPlayers, maxPlayers] = filterOptions.value.playerRange
+    result = result.filter(server => {
+        // 如果服务器状态为空或玩家数为空，则默认为0
+        const playerCount = server.status?.players?.online || 0
+        return playerCount >= minPlayers && playerCount <= maxPlayers
+    })
+
+    // 4. 标签筛选
+    if (filterOptions.value.tags && filterOptions.value.tags.length > 0) {
+        result = result.filter(server => {
+            // 如果服务器没有标签，则不匹配
+            if (!server.tags || server.tags.length === 0) return false
+            // 只要有一个标签匹配即可
+            return server.tags.some(tag => filterOptions.value.tags.includes(tag))
+        })
     }
 
     return result
@@ -108,7 +169,7 @@ const random = () => {
     const shuffleArray = (arr: any[]) => {
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1))
-            ;[arr[i], arr[j]] = [arr[j], arr[i]]
+                ;[arr[i], arr[j]] = [arr[j], arr[i]]
         }
     }
 
@@ -140,37 +201,21 @@ import ServerCardSkeleton from './ServerCardSkeleton.vue'
             <p>搜索服务器，支持名称、拼音、首字母查询，随机推荐与分页浏览。</p>
 
             <a-input-group class="input-line" compact>
-                <a-input
-                    class="input"
-                    simple
-                    v-model:value="searchQuery"
-                    placeholder="输入服务器名称、拼音或拼音首字母搜索..."
-                    allow-clear
-                    @keyup.enter="page = 1"
-                >
+                <a-input class="input" simple v-model:value="searchQuery" placeholder="输入服务器名称、拼音或拼音首字母搜索..."
+                    allow-clear @keyup.enter="page = 1">
                     <template #prefix>
                         <SearchOutlined v-if="isVisible" />
                         <LoadingOutlined v-else />
                     </template>
                 </a-input>
-                <a-button
-                    class="input-btn"
-                    @click="random"
-                    :disabled="!isVisible"
-                >
+                <a-button class="input-btn" @click="random" :disabled="!isVisible">
                     随机
                 </a-button>
             </a-input-group>
 
             <div class="filter-options">
-                <a-tooltip
-                    title="MSCPO 认证服务器更稳定、体验更佳。此选项会显示包括未认证在内的所有服务器"
-                    placement="bottom"
-                >
-                    <a-checkbox
-                        v-model:checked="showAllServers"
-                        @change="page = 1"
-                    >
+                <a-tooltip title="MSCPO 认证服务器更稳定、体验更佳。此选项会显示包括未认证在内的所有服务器" placement="bottom">
+                    <a-checkbox v-model:checked="showAllServers" @change="page = 1">
                         显示未认证服务器
                     </a-checkbox>
                 </a-tooltip>
@@ -182,48 +227,20 @@ import ServerCardSkeleton from './ServerCardSkeleton.vue'
         </div>
         <div v-else-if="error">加载失败 QAQ (code: {{ error.message }})</div>
         <div v-else>
-            <TransitionGroup
-                tag="div"
-                name="fade"
-                class="grid-list"
-                ref="serverList"
-                v-if="isVisible"
-            >
-                <ServerCard
-                    v-for="server in currentPageData"
-                    :key="server.id"
-                    :id="server.id"
-                    :name="server.name"
-                    :ip="server.ip"
-                    :auth_mode="server.auth_mode"
-                    :desc="server.desc"
-                    :status="server.status"
-                    :link="server.link"
-                    :tags="server.tags"
-                    :type="server.type"
-                    :version="server.version"
-                    :is_hide="server.is_hide"
-                    :is_member="server.is_member"
-                    :permission="server.permission"
-                    :detail="server.detail"
-                    :cover_url="server.cover_url"
-                />
+            <TransitionGroup tag="div" name="fade" class="grid-list" ref="serverList" v-if="isVisible">
+                <ServerCard v-for="server in currentPageData" :key="server.id" :id="server.id" :name="server.name"
+                    :ip="server.ip" :auth_mode="server.auth_mode" :desc="server.desc" :status="server.status"
+                    :link="server.link" :tags="server.tags" :type="server.type" :version="server.version"
+                    :is_hide="server.is_hide" :is_member="server.is_member" :permission="server.permission"
+                    :detail="server.detail" :cover_url="server.cover_url" />
             </TransitionGroup>
 
             <div v-else class="grid-list">
-                <ServerCardSkeleton
-                    v-for="n in pageSize"
-                    :key="'skeleton-' + n"
-                />
+                <ServerCardSkeleton v-for="n in pageSize" :key="'skeleton-' + n" />
             </div>
 
             <a-divider />
-            <a-pagination
-                v-model:current="page"
-                :page-size="pageSize"
-                :total="ServersTotal"
-                v-if="isVisible"
-            />
+            <a-pagination v-model:current="page" :page-size="pageSize" :total="ServersTotal" v-if="isVisible" />
         </div>
     </div>
 </template>
@@ -233,44 +250,55 @@ import ServerCardSkeleton from './ServerCardSkeleton.vue'
 
 .ServerList {
     color: @text-color-light;
+
     @media (prefers-color-scheme: dark) {
         color: @text-color-dark;
     }
+
     padding: 20px;
 }
+
 .text {
     h1 {
         font-weight: normal;
         text-align: center;
     }
+
     p {
         font-size: 1.2rem;
         text-align: center;
         padding-inline: 2rem;
         color: @text-color-secondary;
+
         @media (prefers-color-scheme: dark) {
             color: @text-color-secondary-dark;
         }
     }
+
     .input-line {
         margin: 0 auto;
         max-width: 20rem;
+
         .input {
             width: 80%;
         }
+
         .input-btn {
             width: 20%;
         }
     }
+
     .filter-options {
         margin-top: 0.8rem;
         text-align: center;
     }
 }
+
 .page {
     display: flex;
     gap: 0.4rem;
     align-items: center;
+
     .pagin {
         display: flex;
     }
@@ -283,6 +311,7 @@ import ServerCardSkeleton from './ServerCardSkeleton.vue'
     gap: 20px;
     will-change: transform, opacity;
     justify-content: center;
+
     @media screen and (max-width: 768px) {
         grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
     }
@@ -301,6 +330,7 @@ import ServerCardSkeleton from './ServerCardSkeleton.vue'
         opacity: 0;
         transform: translateY(30px) scale(0.95) rotateX(15deg);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0) scale(1) rotateX(0deg);
@@ -312,6 +342,7 @@ import ServerCardSkeleton from './ServerCardSkeleton.vue'
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+
     100% {
         opacity: 0;
         transform: translateY(30px) scale(0.95);
