@@ -135,6 +135,7 @@ export default defineNuxtConfig({
         '@ant-design-vue/nuxt',
         'nuxt-style-extractor',
         '@hypernym/nuxt-anime',
+        '@nuxt/content'
     ],
     antd: {
         extractStyle: true,

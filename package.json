@@ -18,6 +18,7 @@
     "dependencies": {
         "@ant-design-vue/nuxt": "^1.4.6",
         "@ant-design/icons-vue": "^7.0.1",
+        "@nuxt/content": "^3.5.1",
         "@nuxtjs/critters": "^0.9.0",
         "@unhead/vue": "2.0.8",
         "@vueuse/core": "^13.1.0",
@@ -38,7 +39,6 @@
         "@alova/mock": "^2.0.14",
         "@hypernym/nuxt-anime": "^2.1.1",
         "@nuxt/image": "1.10.0",
-        "nuxthub": "^0.9.0",
         "@nuxthub/core": "0.8.25",
         "@nuxtjs/pwa": "^3.3.5",
         "@nuxtjs/seo": "^3.0.3",
@@ -52,6 +52,7 @@
         "less": "^4.3.0",
         "nuxt": "^3.17.2",
         "nuxt-link-checker": "^4.3.0",
+        "nuxthub": "^0.9.0",
         "pinia": "^3.0.2",
         "prettier": "^3.5.3",
         "typescript": "latest",
@@ -65,6 +66,7 @@
     "pnpm": {
         "onlyBuiltDependencies": [
             "@parcel/watcher",
+            "better-sqlite3",
             "core-js",
             "esbuild",
             "sharp",
