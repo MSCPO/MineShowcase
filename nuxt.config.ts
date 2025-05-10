@@ -5,6 +5,7 @@ export default defineNuxtConfig({
     vue: {
         compilerOptions: {},
     },
+    compatibilityDate: 'latest',
     devServer: {
         host: '127.0.0.1',
         port: 3000,
@@ -135,7 +136,7 @@ export default defineNuxtConfig({
         '@ant-design-vue/nuxt',
         'nuxt-style-extractor',
         '@hypernym/nuxt-anime',
-        '@nuxt/content'
+        '@nuxt/content',
     ],
     antd: {
         extractStyle: true,

@@ -32,3 +32,4 @@ logs
 # other
 .trae
 **/.claude/settings.local.json
+.CLAUDE.md
