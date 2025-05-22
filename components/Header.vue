@@ -43,19 +43,36 @@ onMounted(async () => {
     const token = localStorage.getItem('token')
     if (!token) return
 
-    const { send } = useRequest($serverAPI_Token.Get<UserMe>('/v1/me'), {
-        immediate: false,
-    })
-
-    const response = await send()
-
-    if (response.code === 200) {
-        token_status.value = true
-        avatar_url.value = response.avatar_url
-        username.value = response.display_name
+    const cached = localStorage.getItem('user_me_cache')
+    if (cached) {
+        try {
+            const parsed: UserMe = JSON.parse(cached)
+            // 立即展示缓存数据
+            username.value = parsed.display_name
+            avatar_url.value = parsed.avatar_url
+            token_status.value = true
+        } catch {
+            localStorage.removeItem('user_me_cache')
+        }
     }
-    if (response.code === 401) {
-        handleTokenExpiration()
+
+    // 后台自动校验是否过期
+    try {
+        const { send } = useRequest($serverAPI_Token.Get<UserMe>('/v1/me'), {
+            immediate: false,
+        })
+        const response = await send()
+
+        if (response.code === 200) {
+            token_status.value = true
+            username.value = response.display_name
+            avatar_url.value = response.avatar_url
+            localStorage.setItem('user_me_cache', JSON.stringify(response))
+        } else if (response.code === 401) {
+            handleTokenExpiration()
+        }
+    } catch (err) {
+        console.error('验证 token 状态失败:', err)
     }
 })
 

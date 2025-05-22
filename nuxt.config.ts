@@ -87,7 +87,7 @@ export default defineNuxtConfig({
         },
         pageTransition: {
             name: 'page',
-            mode: 'out-in',
+            mode: 'in-out',
         },
     },
     vite: {
