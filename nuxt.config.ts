@@ -1,5 +1,4 @@
 import content from '@originjs/vite-plugin-content'
-// import { pwa } from './config/pwa'
 
 export default defineNuxtConfig({
     vue: {
@@ -90,7 +89,6 @@ export default defineNuxtConfig({
             name: 'page',
             mode: 'out-in',
         },
-        buildAssetsDir: '_nuxt', // 优化构建资源目录
     },
     vite: {
         plugins: [content()],

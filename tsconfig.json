@@ -1,8 +1,11 @@
 {
     "extends": "./.nuxt/tsconfig.json",
     "compilerOptions": {
+        "module": "ESNext",
+        "target": "ES2020",
+        "moduleResolution": "Bundler",
+        "verbatimModuleSyntax": true,
+        "strict": true,
         "plugins": [{ "name": "typescript-plugin-toml" }]
-    },
-    "module": "esnext",
-    "strict": true
+    }
 }

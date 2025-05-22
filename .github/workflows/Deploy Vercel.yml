@@ -1,0 +1,21 @@
+name: Deploy to Vercel
+on: push
+
+jobs:
+    deploy:
+        name: 'Deploy to Vercel'
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Deploy to Vercel
+              uses: amondnet/vercel-action@v25
+              with:
+                  vercel-token: ${{ secrets.VERCEL_TOKEN }}
+                  vercel-org-id: ${{ secrets.ORG_ID}}
+                  vercel-project-id: ${{ secrets.PROJECT_ID}}
+                  vercel-args: '--prod'

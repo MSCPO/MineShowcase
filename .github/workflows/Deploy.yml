@@ -35,7 +35,7 @@ jobs:
                   NUXT_PUBLIC_COMMIT_HASH: ${{ github.sha }}
               run: pnpm build
 
-            - name: Publish
+            - name: Deploy to Cloudflare Pages
               uses: cloudflare/pages-action@v1
               with:
                   apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
