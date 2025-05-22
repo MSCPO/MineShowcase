@@ -7,8 +7,14 @@ if (error.value) {
     console.error('Failed to load markdown content:', error.value)
 }
 
+const title = useState<string>('pageTitle')
+title.value = testMd.value?.title || 'Default Title'
+
+useHead({
+    title: title,
+})
 useSeoMeta({
-    title: testMd.value?.title || 'Default Title',
+    title: title || 'Default Title',
     description: testMd.value?.description || 'Default Description',
 })
 </script>

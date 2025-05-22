@@ -3,15 +3,18 @@ import { ref, onMounted } from 'vue'
 import Logo from '@/assets/logo.svg'
 import GridBackground from '@/components/Background/GridBackground.vue'
 
+const title = useState<string>('pageTitle')
+title.value = 'MSCPO'
+
+useHead({
+    title: title,
+})
+
 // 设置使用home布局，仅首页使用
 definePageMeta({
     layout: 'home',
 })
 
-// 设置页面标题
-useHead({
-    title: 'Minecraft集体宣传组织(MSCPO)',
-})
 
 const isLoaded = ref(false)
 const showContent = ref(false)
