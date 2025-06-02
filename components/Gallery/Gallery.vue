@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, toRefs, defineProps } from 'vue'
+import { ref, toRefs, defineProps, watchEffect } from 'vue'
 import { VueCropper } from 'vue-cropper'
 import { useForm } from 'alova/client'
-import type { add_gallery } from '@/api/models'
 import 'vue-cropper/dist/index.css'
-import type { gallerys_url } from '@/api/models'
+import type { Gallerys, gallerys_url } from '@/api/models'
+import type { add_gallery, ReturnResponse } from '@/api/models'
 const { $serverAPI_Token } = useNuxtApp()
 const props = defineProps<{
     id: number
@@ -16,6 +16,23 @@ const isModalOpen = ref(false)
 const selectedPhoto = ref<gallerys_url | null>(null)
 const currentPhotoIndex = ref<number | null>(null)
 const { photos } = toRefs(props)
+const galleryPhotos = ref<gallerys_url[]>([])
+watchEffect(() => {
+    galleryPhotos.value = [...photos.value]
+})
+
+const refreshGallery = async () => {
+    try {
+        const data = await $serverAPI_Token.Get<Gallerys>(
+            `/v1/servers/${props.id}/gallerys`,
+        )
+        if (data.code === 200) {
+            galleryPhotos.value = data.gallerys_url
+        }
+    } catch (err) {
+        console.error('refresh gallery failed', err)
+    }
+}
 
 const openModal = (photo: gallerys_url, index: number) => {
     selectedPhoto.value = photo
@@ -30,63 +47,15 @@ const closeModal = () => {
 const prevPhoto = () => {
     if (currentPhotoIndex.value! > 0) {
         currentPhotoIndex.value!--
-        selectedPhoto.value = photos.value[currentPhotoIndex.value!]
+        selectedPhoto.value = galleryPhotos.value[currentPhotoIndex.value!]
     }
 }
 
 const nextPhoto = () => {
-    if (currentPhotoIndex.value! < photos.value.length - 1) {
+    if (currentPhotoIndex.value! < galleryPhotos.value.length - 1) {
         currentPhotoIndex.value!++
-        selectedPhoto.value = photos.value[currentPhotoIndex.value!]
+        selectedPhoto.value = galleryPhotos.value[currentPhotoIndex.value!]
     }
-}
-
-// 鼠标拖拽相关变量
-const isDragging = ref(false)
-const startX = ref(0)
-const scrollLeft = ref(0)
-
-const onMouseDown = (e: MouseEvent) => {
-    const target = e.currentTarget as HTMLElement
-    target.style.cursor = 'grabbing'
-    isDragging.value = true
-    startX.value = e.pageX
-    scrollLeft.value = target.scrollLeft
-}
-
-const onMouseMove = (e: MouseEvent) => {
-    if (isDragging.value) {
-        const x = e.pageX
-        const walk = (x - startX.value) * 3
-        const target = e.currentTarget as HTMLElement
-        target.scrollLeft = scrollLeft.value - walk
-    }
-}
-
-const scrollToSnapPoint = (target: HTMLElement) => {
-    const itemWidth = target.firstElementChild?.clientWidth || 0
-    const currentScroll = target.scrollLeft
-    const snapIndex = Math.round(currentScroll / itemWidth)
-    const snapPosition = snapIndex * itemWidth
-    target.scrollTo({
-        left: snapPosition,
-        behavior: 'smooth',
-    })
-}
-
-const onMouseUp = (e: MouseEvent) => {
-    isDragging.value = false
-    const target = e.currentTarget as HTMLElement
-    target.style.cursor = 'grab'
-    console.log('鼠标已经松开')
-    scrollToSnapPoint(target)
-}
-
-const onMouseLeave = (e: MouseEvent) => {
-    isDragging.value = false
-    const target = e.currentTarget as HTMLElement
-    target.style.cursor = 'grab'
-    scrollToSnapPoint(target)
 }
 
 const previewUrl = ref<string | null>('')
@@ -112,7 +81,7 @@ const { form, send: submit } = useForm(
             console.log('FormData  内容:', [...formData.entries()])
         }
         console.log(Data.image)
-        return $serverAPI_Token.Post<add_gallery>(
+        return $serverAPI_Token.Post<ReturnResponse>(
             `/v1/servers/${props.id}/gallerys`,
             formData,
         )
@@ -121,6 +90,17 @@ const { form, send: submit } = useForm(
         initialForm: GalleryInit,
     },
 )
+    .onSuccess(async (res) => {
+        if (res.data.code === 201) {
+            notification.success({ message: '图片上传成功' })
+            await refreshGallery()
+        } else {
+            notification.error({ message: res.data.detail || '上传失败' })
+        }
+    })
+    .onError(() => {
+        notification.error({ message: '上传失败' })
+    })
 
 const handleFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement
@@ -166,6 +146,19 @@ const handleCropCancel = () => {
     previewUrl.value = null
     form.value.image = null
 }
+
+const deletePhoto = async (photo: gallerys_url, index: number) => {
+    try {
+        await $serverAPI_Token.Delete<ReturnResponse>(
+            `/v1/servers/${props.id}/gallerys/${photo.id}`,
+        )
+        galleryPhotos.value.splice(index, 1)
+        closeModal()
+        notification.success({ message: '图片删除成功' })
+    } catch (err) {
+        console.error('delete image failed', err)
+    }
+}
 </script>
 
 <template>
@@ -188,12 +181,19 @@ const handleCropCancel = () => {
                 <h2>增加图片</h2>
             </div>
             <div
-                v-for="(photo, index) in photos"
+                v-for="(photo, index) in galleryPhotos"
                 :key="index"
                 class="item"
                 @click="openModal(photo, index)"
             >
                 <img :src="photo.image_url" />
+                <button
+                    v-if="permission !== 'guest'"
+                    class="delete-button"
+                    @click.stop="deletePhoto(photo, index)"
+                >
+                    <DeleteOutlined />
+                </button>
                 <div class="info-overlay">
                     <div class="info-content">
                         <h3 class="title">{{ photo.title }}</h3>
@@ -224,7 +224,9 @@ const handleCropCancel = () => {
                         <button
                             class="next-button"
                             @click="nextPhoto"
-                            :disabled="currentPhotoIndex === photos.length - 1"
+                            :disabled="
+                                currentPhotoIndex === galleryPhotos.length - 1
+                            "
                         >
                             &gt;
                         </button>
@@ -344,6 +346,27 @@ const handleCropCancel = () => {
                     .info-content {
                         transform: translateY(0);
                     }
+                }
+            }
+            .delete-button {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                background: rgba(0, 0, 0, 0.6);
+                border: none;
+                color: #fff;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 1;
+                transition: background 0.3s;
+                pointer-events: auto;
+                &:hover {
+                    background: rgba(0, 0, 0, 0.8);
                 }
             }
         }

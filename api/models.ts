@@ -137,7 +137,6 @@ export interface ReturnResponse {
      */
     detail: string
     code?: number
-    success: boolean
 }
 
 /**
