@@ -2,6 +2,7 @@
 import { ref, toRefs, defineProps, watchEffect } from 'vue'
 import { VueCropper } from 'vue-cropper'
 import { useForm } from 'alova/client'
+import { Modal, notification } from 'ant-design-vue'
 import 'vue-cropper/dist/index.css'
 import type { Gallerys, gallerys_url } from '@/api/models'
 import type { add_gallery, ReturnResponse } from '@/api/models'
@@ -147,6 +148,16 @@ const handleCropCancel = () => {
     form.value.image = null
 }
 
+const confirmDeletePhoto = (photo: gallerys_url, index: number) => {
+    Modal.confirm({
+        title: '确认删除',
+        content: '确定要删除这张图片吗？',
+        okText: '删除',
+        cancelText: '取消',
+        onOk: () => deletePhoto(photo, index),
+    })
+}
+
 const deletePhoto = async (photo: gallerys_url, index: number) => {
     try {
         await $serverAPI_Token.Delete<ReturnResponse>(
@@ -164,11 +175,12 @@ const deletePhoto = async (photo: gallerys_url, index: number) => {
 <template>
     <div class="gallery-box">
         <!-- 图片列表 -->
-        <div class="items" dir="ltr">
+        <TransitionGroup name="list" tag="div" class="items" dir="ltr">
             <div
                 v-if="permission !== 'guest'"
                 class="item add-gallery"
                 @click="openFileInput"
+                key="add"
             >
                 <input
                     type="file"
@@ -182,7 +194,7 @@ const deletePhoto = async (photo: gallerys_url, index: number) => {
             </div>
             <div
                 v-for="(photo, index) in galleryPhotos"
-                :key="index"
+                :key="photo.id"
                 class="item"
                 @click="openModal(photo, index)"
             >
@@ -190,7 +202,7 @@ const deletePhoto = async (photo: gallerys_url, index: number) => {
                 <button
                     v-if="permission !== 'guest'"
                     class="delete-button"
-                    @click.stop="deletePhoto(photo, index)"
+                    @click.stop="confirmDeletePhoto(photo, index)"
                 >
                     <DeleteOutlined />
                 </button>
@@ -201,7 +213,7 @@ const deletePhoto = async (photo: gallerys_url, index: number) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </TransitionGroup>
         <!-- 显示大图 -->
         <transition name="modal">
             <div v-if="isModalOpen" class="modal" @click.self="closeModal">
@@ -213,6 +225,18 @@ const deletePhoto = async (photo: gallerys_url, index: number) => {
                             class="modal-image"
                         />
                     </transition>
+                    <button
+                        v-if="permission !== 'guest' && selectedPhoto"
+                        class="modal-delete-button"
+                        @click.stop="
+                            confirmDeletePhoto(
+                                selectedPhoto,
+                                currentPhotoIndex!,
+                            )
+                        "
+                    >
+                        <DeleteOutlined />
+                    </button>
                     <div class="modal-controls">
                         <button
                             class="prev-button"
@@ -568,5 +592,37 @@ const deletePhoto = async (photo: gallerys_url, index: number) => {
             transform: none;
         }
     }
+}
+
+.modal-delete-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+}
+
+.list-enter-active,
+.list-leave-active {
+    transition: all 0.3s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
+    transform: scale(0.95);
 }
 </style>
