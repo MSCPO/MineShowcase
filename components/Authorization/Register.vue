@@ -2,7 +2,7 @@
 import { ref, onBeforeUnmount, onMounted, computed } from 'vue'
 
 import { useRequest } from 'alova/client'
-import reCaptcha from '../Recaptcha/ReCaptchaV3.vue'
+import hCaptcha from '../Hcaptcha/HCaptcha.vue'
 import type {
     SiteKey,
     Login,
@@ -93,10 +93,10 @@ const rules: Record<string, Rule[]> = {
     email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
 }
 
-// reCAPTCHA逻辑
+// hCaptcha逻辑
 const isLoaded = ref(false)
 const site_key = ref('')
-const { data } = useRequest($serverAPI.Get<SiteKey>('/v1/reCAPTCHA_site_key'), {
+const { data } = useRequest($serverAPI.Get<SiteKey>('/v1/hcaptcha_site_key'), {
     immediate: true,
 })
 
@@ -250,7 +250,7 @@ const handleRegSubmit = async () => {
         })
     } else if (response.code === 422) {
         notification.error({
-            message: 'reCAPTCHA 验证失败',
+            message: 'hCaptcha 验证失败',
             description: response.detail,
             duration: 2,
         })
@@ -377,22 +377,17 @@ const handleMailSubmit = async () => {
         <a-row :gutter="[0, 24]">
             <a-col :span="24">
                 <div class="form-actions">
-                    <reCaptcha
+                    <hCaptcha
                         v-if="data"
                         v-model="site_key"
                         @loaded="isLoaded"
-                        :siteKey="data.recapcha_sitekey"
+                        :siteKey="data.hcaptcha_sitekey"
                         action="submit"
                         :key="captchaKey"
+                        @execute="handleRegSubmit"
                     >
-                        <a-button
-                            type="primary"
-                            :disabled="!site_key"
-                            @click="handleRegSubmit"
-                        >
-                            注册
-                        </a-button>
-                    </reCaptcha>
+                        <a-button type="primary">注册</a-button>
+                    </hCaptcha>
                 </div>
             </a-col>
         </a-row>
@@ -414,22 +409,17 @@ const handleMailSubmit = async () => {
         <a-row :gutter="[0, 24]">
             <a-col :span="24">
                 <div class="form-actions">
-                    <reCaptcha
+                    <hCaptcha
                         v-if="data"
                         v-model="site_key"
                         @loaded="isLoaded"
-                        :siteKey="data.recapcha_sitekey"
+                        :siteKey="data.hcaptcha_sitekey"
                         action="submit"
                         :key="captchaKey"
+                        @execute="handleMailSubmit"
                     >
-                        <a-button
-                            type="primary"
-                            :disabled="!site_key"
-                            @click="handleMailSubmit"
-                        >
-                            验证并继续
-                        </a-button>
-                    </reCaptcha>
+                        <a-button type="primary">验证并继续</a-button>
+                    </hCaptcha>
                 </div>
             </a-col>
         </a-row>

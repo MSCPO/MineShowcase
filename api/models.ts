@@ -85,10 +85,10 @@ export interface Fetch_Status {
 }
 
 /**
- * ReCapcha_sitekey 数据模型
+ * hCaptcha_sitekey 数据模型
  */
 export interface SiteKey {
-    recapcha_sitekey: string
+    hcaptcha_sitekey: string
 }
 
 /**

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRequest, useForm } from 'alova/client'
-import reCaptcha from '../Recaptcha/ReCaptchaV3.vue'
+import hCaptcha from '../Hcaptcha/HCaptcha.vue'
 import type { SiteKey, Login, LoginData } from '@/api/models'
 import { notification } from 'ant-design-vue'
 import type { RuleObject } from 'ant-design-vue/lib/form/interface'
@@ -24,10 +24,10 @@ const rules = {
     ],
 }
 
-const captchaKey = ref(0) // 用于强制刷新reCaptcha组件
+const captchaKey = ref(0) // 用于强制刷新hCaptcha组件
 
 const { data: SiteKey } = useRequest(
-    $serverAPI.Get<SiteKey>('/v1/reCAPTCHA_site_key'),
+    $serverAPI.Get<SiteKey>('/v1/hcaptcha_site_key'),
 )
 
 const LoginInit = reactive<LoginData>({
@@ -54,7 +54,7 @@ const { form: data, send: login } = useForm(
         window.location.href = '/'
     } else if (response.data.code === 400) {
         notification.error({
-            message: 'reCAPTCHA 验证失败',
+            message: 'hCaptcha 验证失败',
             duration: 4,
             description: '请重试',
         })
@@ -95,21 +95,16 @@ const { form: data, send: login } = useForm(
         <a-row :gutter="[0, 24]">
             <a-col :span="24">
                 <div style="display: flex; justify-content: flex-end">
-                    <reCaptcha
+                    <hCaptcha
                         v-if="SiteKey"
                         v-model="data.captcha_response"
-                        :siteKey="SiteKey.recapcha_sitekey"
+                        :siteKey="SiteKey.hcaptcha_sitekey"
                         action="submit"
                         :key="captchaKey"
+                        @execute="login"
                     >
-                        <a-button
-                            type="primary"
-                            :loading="data.captcha_response === ''"
-                            @click="login"
-                        >
-                            登录
-                        </a-button>
-                    </reCaptcha>
+                        <a-button type="primary">登录</a-button>
+                    </hCaptcha>
                     <a-button v-else type="primary" loading>登录</a-button>
                 </div>
             </a-col>

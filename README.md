@@ -34,6 +34,6 @@ MineShowcase 是一个以 MSCPO/ServerAPI 作为后端的MSCPO页面
     <img src="https://contrib.rocks/image?repo=MSCPO/MineShowcase" alt="Contributors"/>
 </a>
 
----------
+---
 
->对以上参与者致以敬意！
+> 对以上参与者致以敬意！

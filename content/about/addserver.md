@@ -1,6 +1,6 @@
 # 如何在集宣组织宣传网站中添加自己的服务器展示位置？
 
-待处理：![Wait...](https://img.shields.io/github/issues/MSCPO/mscpo.github.io.svg)    已处理：![Completed](https://img.shields.io/github/issues-closed/MSCPO/mscpo.github.io.svg)
+待处理：![Wait...](https://img.shields.io/github/issues/MSCPO/mscpo.github.io.svg) 已处理：![Completed](https://img.shields.io/github/issues-closed/MSCPO/mscpo.github.io.svg)
 
 ## 方法1：加入委员会群聊
 
@@ -24,9 +24,9 @@ QQ 群组：[[加入 MSCPO集宣组织 | 一群]](https://qm.qq.com/cgi-bin/qm/q
 ## 方法2：问卷申请
 
 1. 提供必要信息
-  [申请通道](https://github.com/MSCPO/mscpo.github.io/issues/new/choose)
+   [申请通道](https://github.com/MSCPO/mscpo.github.io/issues/new/choose)
 2. 等待审核结果。
-  如果您有GitHub账号，可以加入组织，帮助我们更新服务器列表，贡献组织下的开源项目（如[Server_Ping](https://github.com/MSCPO/Server_Ping)、[ServerDocumentation](https://github.com/MSCPO/ServerDocumentation)等）。
+   如果您有GitHub账号，可以加入组织，帮助我们更新服务器列表，贡献组织下的开源项目（如[Server_Ping](https://github.com/MSCPO/Server_Ping)、[ServerDocumentation](https://github.com/MSCPO/ServerDocumentation)等）。
 
 ## 方法3：提交PR等待合并
 

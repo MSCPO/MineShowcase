@@ -15,7 +15,6 @@ definePageMeta({
     layout: 'home',
 })
 
-
 const isLoaded = ref(false)
 const showContent = ref(false)
 

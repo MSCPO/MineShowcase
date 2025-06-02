@@ -15,12 +15,14 @@ const fetchStats = async () => {
     try {
         loading.value = true
         // 获取服务器列表
-        const response = await $serverAPI.Get<ServerTotalPlayers>('/v1/servers/players', {})
-
+        const response = await $serverAPI.Get<ServerTotalPlayers>(
+            '/v1/servers/players',
+            {},
+        )
 
         // 更新统计数据
         stats.value = {
-            onlinePlayers:  response.total_players,
+            onlinePlayers: response.total_players,
         }
     } catch (error) {
         console.error('获取统计数据失败:', error)
