@@ -16,6 +16,10 @@ import type { Rule } from 'ant-design-vue/es/form'
 import type { FormInstance, UploadChangeParam } from 'ant-design-vue'
 const { $serverAPI } = useNuxtApp()
 
+// 控制表单提交状态，防止重复请求
+const isMailSubmitting = ref(false)
+const isRegSubmitting = ref(false)
+
 const options = computed(() => {
     const prefix = form.value.email.split('@')[0]
     const suffixes = ['@gmail.com', '@163.com', '@qq.com']
@@ -193,6 +197,8 @@ const { send: registerUser } = useRequest(
 )
 
 const handleRegSubmit = async () => {
+    if (isRegSubmitting.value) return
+    isRegSubmitting.value = true
     try {
         await regFormRef.value?.validate()
     } catch (error) {
@@ -201,6 +207,7 @@ const handleRegSubmit = async () => {
             description: '请检查表单是否填写正确',
             duration: 2,
         })
+        isRegSubmitting.value = false
         return
     }
 
@@ -234,7 +241,13 @@ const handleRegSubmit = async () => {
     formData.append('avatar', RegForm.value.avatar)
     formData.append('request', JSON.stringify(requestData))
 
-    const response = await registerUser(formData)
+    let response
+    try {
+        response = await registerUser(formData)
+    } catch (error) {
+        isRegSubmitting.value = false
+        return
+    }
     if (response.code === 200) {
         notification.success({
             message: '已成功注册！',
@@ -276,6 +289,7 @@ const handleRegSubmit = async () => {
     }
     captchaKey.value++
     site_key.value = ''
+    if (response.code !== 200) isRegSubmitting.value = false
 }
 
 // 邮箱验证请求处理
@@ -291,6 +305,8 @@ const captchaKey = ref(0)
 
 // 修改 handleMailSubmit 函数
 const handleMailSubmit = async () => {
+    if (isMailSubmitting.value) return
+    isMailSubmitting.value = true
     const response = await verifyEmail()
     if (response.code === 200) {
         notification.success({
@@ -314,6 +330,7 @@ const handleMailSubmit = async () => {
     }
     captchaKey.value++
     site_key.value = ''
+    isMailSubmitting.value = false
 }
 </script>
 
@@ -384,9 +401,16 @@ const handleMailSubmit = async () => {
                         :siteKey="data.hcaptcha_sitekey"
                         action="submit"
                         :key="captchaKey"
+                        :disabled="isRegSubmitting"
                         @execute="handleRegSubmit"
                     >
-                        <a-button type="primary">注册</a-button>
+                        <a-button
+                            type="primary"
+                            :disabled="isRegSubmitting"
+                            :loading="isRegSubmitting"
+                        >
+                            注册
+                        </a-button>
                     </hCaptcha>
                 </div>
             </a-col>
@@ -416,9 +440,16 @@ const handleMailSubmit = async () => {
                         :siteKey="data.hcaptcha_sitekey"
                         action="submit"
                         :key="captchaKey"
+                        :disabled="isMailSubmitting"
                         @execute="handleMailSubmit"
                     >
-                        <a-button type="primary">验证并继续</a-button>
+                        <a-button
+                            type="primary"
+                            :disabled="isMailSubmitting"
+                            :loading="isMailSubmitting"
+                        >
+                            验证并继续
+                        </a-button>
                     </hCaptcha>
                 </div>
             </a-col>

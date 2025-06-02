@@ -36,44 +36,57 @@ const LoginInit = reactive<LoginData>({
     captcha_response: '',
 })
 
+const isSubmitting = ref(false)
+
 const { form: data, send: login } = useForm(
     (Data) => $serverAPI.Post<Login>('/v1/login', Data),
     {
         initialForm: LoginInit,
     },
-).onSuccess(async (response) => {
-    if (response.data.code === 200) {
-        notification.success({
-            message: '登录成功',
-            duration: 4,
-            description: '欢迎回来!',
-        })
-        await new Promise((resolve) => setTimeout(resolve, 3000))
-        localStorage.setItem('token', response.data.access_token)
-        localStorage.setItem('token_type', response.data.token_type)
-        window.location.href = '/'
-    } else if (response.data.code === 400) {
-        notification.error({
-            message: 'hCaptcha 验证失败',
-            duration: 4,
-            description: '请重试',
-        })
-        captchaKey.value += 1
-    } else if (response.data.code === 401) {
-        notification.error({
-            message: '登录失败',
-            duration: 4,
-            description: '用户名或密码错误',
-        })
-    }
-    captchaKey.value++
-    response.data.access_token = ''
-})
+)
+    .onSuccess(async (response) => {
+        if (response.data.code === 200) {
+            notification.success({
+                message: '登录成功',
+                duration: 4,
+                description: '欢迎回来!',
+            })
+            await new Promise((resolve) => setTimeout(resolve, 3000))
+            localStorage.setItem('token', response.data.access_token)
+            localStorage.setItem('token_type', response.data.token_type)
+            window.location.href = '/'
+        } else if (response.data.code === 400) {
+            notification.error({
+                message: 'hCaptcha 验证失败',
+                duration: 4,
+                description: '请重试',
+            })
+            captchaKey.value += 1
+        } else if (response.data.code === 401) {
+            notification.error({
+                message: '登录失败',
+                duration: 4,
+                description: '用户名或密码错误',
+            })
+        }
+        captchaKey.value++
+        response.data.access_token = ''
+        if (response.data.code !== 200) isSubmitting.value = false
+    })
+    .onError(() => {
+        isSubmitting.value = false
+    })
+
+const handleLogin = async () => {
+    if (isSubmitting.value) return
+    isSubmitting.value = true
+    await login()
+}
 </script>
 
 <template>
     <h2>登录</h2>
-    <a-form :model="data" @submit.prevent="login">
+    <a-form :model="data" @submit.prevent="handleLogin">
         <a-form-item
             :rules="rules.username_or_email"
             name="username_or_email"
@@ -101,9 +114,16 @@ const { form: data, send: login } = useForm(
                         :siteKey="SiteKey.hcaptcha_sitekey"
                         action="submit"
                         :key="captchaKey"
-                        @execute="login"
+                        :disabled="isSubmitting"
+                        @execute="handleLogin"
                     >
-                        <a-button type="primary">登录</a-button>
+                        <a-button
+                            type="primary"
+                            :disabled="isSubmitting"
+                            :loading="isSubmitting"
+                        >
+                            登录
+                        </a-button>
                     </hCaptcha>
                     <a-button v-else type="primary" loading>登录</a-button>
                 </div>

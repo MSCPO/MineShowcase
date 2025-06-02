@@ -11,6 +11,10 @@ const props = defineProps({
         default: '',
     },
     modelValue: String,
+    disabled: {
+        type: Boolean,
+        default: false,
+    },
 })
 
 const emits = defineEmits(['update:modelValue', 'execute'])
@@ -79,7 +83,11 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div ref="container" @click="handleClick" :disabled="!isLoaded || loading">
+    <div
+        ref="container"
+        @click="handleClick"
+        :disabled="!isLoaded || loading || props.disabled"
+    >
         <slot></slot>
     </div>
 </template>
